@@ -37,6 +37,10 @@ export class TaskStatus {
     toString(): string {
         return this.value;
     }
+
+    toJSON(): string {
+        return this.value;
+    }
 }
 
 interface TaskConstructorParams {
