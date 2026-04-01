@@ -1,10 +1,11 @@
-import {Module} from '@nestjs/common';
-import {AppController} from './app.controller';
-import {AppService} from './app.service';
-import {PostgresModule} from "./postgres/postgres.module";
-import {ConfigModule} from "@nestjs/config";
-import {validationConfig} from "./config/validation.config";
-import { TaskService } from './task/application/task.service';
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { PostgresModule } from './postgres/postgres.module';
+import { ConfigModule } from '@nestjs/config';
+import { validationConfig } from './config/validation.config';
+import { EventModule } from './event/application/event.module';
+import { ProjectModule } from './project/application/project.module';
 import { TaskModule } from './task/application/task.module';
 
 @Module({
@@ -13,13 +14,14 @@ import { TaskModule } from './task/application/task.module';
             envFilePath: '.env',
             isGlobal: true,
             cache: true,
-            validationSchema: validationConfig
+            validationSchema: validationConfig,
         }),
         PostgresModule,
-        TaskModule
+        EventModule,
+        ProjectModule,
+        TaskModule,
     ],
     controllers: [AppController],
-    providers: [AppService, TaskService],
+    providers: [AppService],
 })
-export class AppModule {
-}
+export class AppModule {}
