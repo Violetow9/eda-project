@@ -1,12 +1,28 @@
-import { Module } from '@nestjs/common';
-import { ProjectController } from '../presentation/project.controller';
-import { ProjectService } from './project.service';
-import { Project } from '../domain/project.entity';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import {Module} from '@nestjs/common';
+import {ProjectController} from '../presentation/project.controller';
+import {ProjectService} from './project.service';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {PROJECT_REPOSITORY} from "./project.constants";
+import {TypeOrmProjectRepository} from "../infrastructure/typeorm-project.repository";
+import {TypeOrmProject} from "../infrastructure/typeorm-project.entity";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Project])],
-  controllers: [ProjectController],
-  providers: [ProjectService],
+    imports: [
+        TypeOrmModule.forFeature([TypeOrmProject]),
+    ],
+    providers: [
+        TypeOrmProjectRepository,
+        {
+            provide: PROJECT_REPOSITORY,
+            useClass: TypeOrmProjectRepository,
+        },
+        ProjectService
+    ],
+    exports: [
+        PROJECT_REPOSITORY,
+        ProjectService
+    ],
+    controllers: [ProjectController],
 })
-export class ProjectModule {}
+export class ProjectModule {
+}

@@ -1,10 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import type { ProjectRepository } from '../domain/project.repository.interface';
+import {Inject, Injectable } from '@nestjs/common';
 import { Project } from '../domain/project.entity';
+import type { ProjectRepository } from '../domain/project.repository.interface';
+import {PROJECT_REPOSITORY} from "./project.constants";
+
 
 @Injectable()
 export class ProjectService {
-  constructor(private readonly projectRepository: ProjectRepository) {}
+    constructor(
+        @Inject(PROJECT_REPOSITORY)
+        private readonly projectsRepository: ProjectRepository
+    ) {
+    }
 
   async getAll(): Promise<Project[]> {
     return await this.projectRepository.findAll();
