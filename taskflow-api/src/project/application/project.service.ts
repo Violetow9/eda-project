@@ -3,12 +3,17 @@ import {Project} from '../domain/project.entity';
 import type {ProjectRepository} from '../domain/project.repository.interface';
 import {PROJECT_REPOSITORY} from "./project.constants";
 import {CreateProjectDto} from "../presentation/create-project.dto";
+import type {EventPublisher} from "../../event/application/event-publisher.interface";
+import {EVENT_PUBLISHER} from "../../event/application/event.constants";
+import {ProjectCreatedEvent} from "./project-created.event";
 
 @Injectable()
 export class ProjectService {
     constructor(
         @Inject(PROJECT_REPOSITORY)
-        private readonly projectRepository: ProjectRepository
+        private readonly projectRepository: ProjectRepository,
+        @Inject(EVENT_PUBLISHER)
+        private readonly eventPublisher: EventPublisher,
     ) {
     }
 
@@ -41,8 +46,17 @@ export class ProjectService {
     }
 
     async create(createProjectDto: CreateProjectDto): Promise<Project> {
-        return await this.projectRepository.create({
+        const project = await this.projectRepository.create({
             projectName: createProjectDto.projectName
         });
+
+        const event = new ProjectCreatedEvent(project.projectName, project.projectName);
+
+        this.eventPublisher.publish(
+            'project.created',
+            event
+        );
+
+        return project;
     }
 }

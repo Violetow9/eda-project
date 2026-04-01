@@ -5,6 +5,7 @@ import {PostgresModule} from "./postgres/postgres.module";
 import {ConfigModule} from "@nestjs/config";
 import {validationConfig} from "./config/validation.config";
 import {ProjectModule} from "./project/application/project.module";
+import {EventModule} from "./event/application/event.module";
 
 @Module({
     imports: [
@@ -15,9 +16,11 @@ import {ProjectModule} from "./project/application/project.module";
             validationSchema: validationConfig
         }),
         PostgresModule,
+        EventModule,
         ProjectModule
     ],
     controllers: [AppController],
     providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+}
