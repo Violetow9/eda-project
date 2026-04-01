@@ -11,14 +11,14 @@
 
 ## Stack technique
 
-| Couche | Technologie |
-|--------|-------------|
-| Frontend | Next.js (App Router) + React |
-| Backend | NestJS |
-| Base de données | PostgreSQL + ORM |
-| Tests | Jest + Testing Library |
-| CI | GitHub Actions |
-| Déploiement | Docker + Docker Compose |
+| Couche          | Technologie                  |
+|-----------------|------------------------------|
+| Frontend        | Next.js (App Router) + React |
+| Backend         | NestJS                       |
+| Base de données | PostgreSQL + ORM             |
+| Tests           | Jest + Testing Library       |
+| CI              | GitHub Actions               |
+| Déploiement     | Docker + Docker Compose      |
 
 ---
 
@@ -30,25 +30,26 @@
 
 ## ADR — Architecture Decision Records
 
-> Chaque ADR est un fichier séparé dans `docs/`. Utilisez le template [`docs/ADR-template.md`](docs/ADR-template.md) et l'exemple [`docs/ADR-000.md`](docs/ADR-000.md).
+> Chaque ADR est un fichier séparé dans `docs/`. Utilisez le template [`docs/ADR-template.md`](docs/ADR-template.md) et
+> l'exemple [`docs/ADR-000.md`](docs/ADR-000.md).
 >
 > Listez ici vos ADR une fois créés :
 
-| ADR | Titre | Statut |
-|-----|-------|--------|
-| [ADR-001](docs/ADR-001.md) | | |
-| [ADR-002](docs/ADR-002.md) | | |
-| [ADR-003](docs/ADR-003.md) | | |
+| ADR                        | Titre | Statut |
+|----------------------------|-------|--------|
+| [ADR-001](docs/ADR-001.md) |       |        |
+| [ADR-002](docs/ADR-002.md) |       |        |
+| [ADR-003](docs/ADR-003.md) |       |        |
 
 ---
 
 ## Tags de rendu
 
-| Phase | Tag attendu | Statut |
-|------|-------------|--------|
-| Rendu 1 | `rendu-1` | |
-| Rendu 2 | `rendu-2` | |
-| Rendu 3 | `rendu-3` | |
+| Phase   | Tag attendu | Statut |
+|---------|-------------|--------|
+| Rendu 1 | `rendu-1`   |        |
+| Rendu 2 | `rendu-2`   |        |
+| Rendu 3 | `rendu-3`   |        |
 
 ---
 
@@ -59,7 +60,7 @@
 - [ ] Module `project` (controller / service / repository / interface)
 - [ ] Module `task` avec Value Object `TaskStatus` (transitions Todo → In Progress → Done)
 - [ ] Publication d'au moins deux domain events (`task.created`, `task.moved`)
-- [ ] `ConsoleHandler` branché sur ces deux events (affiche event + taskId + horodatage dans la console)
+- [ ] `ConsoleListener` branché sur ces deux events (affiche event + taskId + horodatage dans la console)
 - [ ] Couche repository abstraite (interface + implémentation ORM)
 - [ ] Frontend : page unique, colonnes Kanban, déplacement de tâche (bouton suffit)
 - [ ] Tests unitaires des services (transitions de statut + publication d'events, sans BDD)
@@ -118,11 +119,11 @@
 
 ### Tableau des scénarios de panne
 
-| Scénario | Comportement attendu | Comportement constaté |
-|----------|----------------------|-----------------------|
-| Canal email indisponible | Le système continue, message mis en file | |
-| WebSocket coupé | Kanban fonctionnel en mode requête classique | |
-| | | |
+| Scénario                 | Comportement attendu                         | Comportement constaté |
+|--------------------------|----------------------------------------------|-----------------------|
+| Canal email indisponible | Le système continue, message mis en file     |                       |
+| WebSocket coupé          | Kanban fonctionnel en mode requête classique |                       |
+|                          |                                              |                       |
 
 ### Analyse d'impact
 
@@ -145,10 +146,10 @@
 
 ## Note finale
 
-| Livrable | Coefficient | Note |
-|----------|-------------|------|
-| Rendu 1 (Fondations) | × 0,20 | /20 |
-| Rendu 2 (Évolution) | × 0,25 | /20 |
-| Rendu 3 (Résilience) | × 0,30 | /20 |
-| Soutenance | × 0,25 | /20 |
-| **Note finale** | | **/20** |
+| Livrable             | Coefficient | Note    |
+|----------------------|-------------|---------|
+| Rendu 1 (Fondations) | × 0,20      | /20     |
+| Rendu 2 (Évolution)  | × 0,25      | /20     |
+| Rendu 3 (Résilience) | × 0,30      | /20     |
+| Soutenance           | × 0,25      | /20     |
+| **Note finale**      |             | **/20** |

@@ -4,6 +4,8 @@ import {AppService} from './app.service';
 import {PostgresModule} from "./postgres/postgres.module";
 import {ConfigModule} from "@nestjs/config";
 import {validationConfig} from "./config/validation.config";
+import {ProjectModule} from "./project/application/project.module";
+import {EventModule} from "./event/application/event.module";
 
 @Module({
     imports: [
@@ -13,7 +15,9 @@ import {validationConfig} from "./config/validation.config";
             cache: true,
             validationSchema: validationConfig
         }),
-        PostgresModule
+        PostgresModule,
+        EventModule,
+        ProjectModule
     ],
     controllers: [AppController],
     providers: [AppService],
