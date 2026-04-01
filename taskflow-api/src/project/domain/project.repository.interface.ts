@@ -6,4 +6,5 @@ export interface ProjectRepository {
     findOneByName(projectName: string): Promise<Project | null>;
     remove(id: number): Promise<void>;
     create(project: Partial<Project>): Promise<Project>;
+    update(project: Project): Promise<Project>;
 }
