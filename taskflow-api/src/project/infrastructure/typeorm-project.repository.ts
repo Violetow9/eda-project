@@ -2,32 +2,37 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProjectRepository } from '../domain/project.repository.interface';
-import { TypeOrmProject } from '../domain/typeorm-project.entity';
+import { TypeOrmProject } from './typeorm-project.entity';
+import { Project } from '../domain/project.entity';
+import { toDomain, toTypeOrm } from './project.mapper';
 
 @Injectable()
 export class TypeOrmProjectRepository implements ProjectRepository {
-  constructor(
-    @InjectRepository(TypeOrmProject)
-    private projectsRepository: Repository<TypeOrmProject>,
-  ) {}
+    constructor(
+        @InjectRepository(TypeOrmProject)
+        private readonly repo: Repository<TypeOrmProject>,
+    ) {}
 
-  findAll(): Promise<TypeOrmProject[]> {
-    return this.projectsRepository.find();
-  }
+    async findAll(): Promise<Project[]> {
+        const rows = await this.repo.find();
+        return rows.map(toDomain);
+    }
 
-  findOne(id: number): Promise<TypeOrmProject | null> {
-    return this.projectsRepository.findOneBy({ id });
-  }
+    async findOne(id: number): Promise<Project | null> {
+        const row = await this.repo.findOneBy({ id });
+        return row ? toDomain(row) : null;
+    }
 
-  findOneByName(projectName: string): Promise<TypeOrmProject | null> {
-    return this.projectsRepository.findOneBy({ projectName });
-  }
+    async findOneByName(projectName: string): Promise<Project | null> {
+        const row = await this.repo.findOneBy({ projectName });
+        return row ? toDomain(row) : null;
+    }
 
-  async remove(id: number): Promise<void> {
-    await this.projectsRepository.delete(id);
-  }
+    async remove(id: number): Promise<void> {
+        await this.repo.delete(id);
+    }
 
-  async create(project: TypeOrmProject) {
-    await this.projectsRepository.save(project);
-  }
+    async create(project: Project): Promise<void> {
+        await this.repo.save(toTypeOrm(project));
+    }
 }

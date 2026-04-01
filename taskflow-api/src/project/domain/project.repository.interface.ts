@@ -1,13 +1,13 @@
-import { Project } from './project.entity';
+import {Project} from './project.entity';
 
 export interface ProjectRepository {
-  findAll(): Promise<Project[]>;
+    findAll(): Promise<Project[]>;
 
-  findOne(id: number): Promise<Project | null>;
+    findOne(id: number): Promise<Project | null>;
 
-  findOneByName(projectName: string): Promise<Project | null>;
+    findOneByName(projectName: string): Promise<Project | null>;
 
-  remove(id: number): Promise<void>;
+    remove(id: number): Promise<void>;
 
-  create(project: Project);
+    create(project: Project): Promise<void>;
 }
