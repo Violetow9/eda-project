@@ -1,0 +1,10 @@
+info:
+  name: project
+  type: folder
+  seq: 1
+
+request:
+  auth: inherit
+  variables:
+    - name: ROUTE
+      value: project
