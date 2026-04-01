@@ -1,53 +1,61 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
-import { Task } from '../domain/task.entity';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Task, TaskStatus } from '../domain/task.entity';
 import type { TaskRepository } from '../domain/task.repository.interface';
+import { TASK_REPOSITORY } from './task.constants';
 import { CreateTaskDto } from '../presentation/create-task.dto';
+import type { EventPublisher } from '../../event/application/event-publisher.interface';
+import { EVENT_PUBLISHER } from '../../event/application/event.constants';
+import { TaskCreatedEvent } from '../domain/task-created.event';
+import { TaskMovedEvent } from '../domain/task-moved.event';
 
 @Injectable()
 export class TaskService {
-  constructor(
-    @Inject(TASK_REPOSITORY)
-    private readonly taskRepository: TaskRepository,
-    @Inject(EVENT_PUBLISHER)
-    private readonly eventPublisher: EventPublisher,
-  ) {}
+    constructor(
+        @Inject(TASK_REPOSITORY)
+        private readonly taskRepository: TaskRepository,
+        @Inject(EVENT_PUBLISHER)
+        private readonly eventPublisher: EventPublisher,
+    ) {}
 
-  async getAll(): Promise<Task[]> {
-    return await this.taskRepository.findAll();
-  }
-
-  async getById(id: number): Promise<Task> {
-    const project = await this.taskRepository.findOne(id);
-
-    if (!project) {
-      throw new NotFoundException(`Project with id ${id} not found`);
+    async getAll(): Promise<Task[]> {
+        return this.taskRepository.findAll();
     }
 
-    return project;
-  }
-
-  async getAllByProjectId(projectId: number): Promise<Task[]> {
-    const project = await this.taskRepository.findAllByProjectId(projectId);
-
-    if (!project) {
-      throw new NotFoundException(`Project ${projectId} not found`);
+    async getById(id: number): Promise<Task> {
+        const task = await this.taskRepository.findOne(id);
+        if (!task) throw new NotFoundException(`Task with id ${id} not found`);
+        return task;
     }
 
-    return project;
-  }
+    async getAllByProjectId(projectId: number): Promise<Task[]> {
+        return this.taskRepository.findAllByProjectId(projectId);
+    }
 
-  async delete(id: number): Promise<void> {
-    return await this.taskRepository.remove(id);
-  }
+    async delete(id: number): Promise<void> {
+        return this.taskRepository.remove(id);
+    }
 
-  async create(createTaskDto: CreateTaskDto): Promise<Task> {
-    const task = await this.taskRepository.create({
-      projectId: createTaskDto.projectId,
-      title: createTaskDto.title,
-      assigneeUserId: createTaskDto.assigneeUserId,
-      status: createTaskDto.status,
-    });
+    async create(dto: CreateTaskDto): Promise<Task> {
+        const task = await this.taskRepository.create({
+            title: dto.title,
+            projectId: dto.projectId,
+            assigneeUserId: dto.assigneeUserId ?? null,
+            status: TaskStatus.TODO,
+        });
 
-    return task;
-  }
+        this.eventPublisher.publish('task.created', new TaskCreatedEvent(task.id, task.title, task.projectId));
+
+        return task;
+    }
+
+    async moveTask(id: number, newStatus: TaskStatus): Promise<Task> {
+        const task = await this.getById(id);
+        const previousStatus = task.status.toString();
+        const moved = task.move(newStatus);
+        const saved = await this.taskRepository.update(moved);
+
+        this.eventPublisher.publish('task.moved', new TaskMovedEvent(saved.id, previousStatus, saved.status.toString()));
+
+        return saved;
+    }
 }

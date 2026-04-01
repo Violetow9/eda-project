@@ -1,0 +1,21 @@
+info:
+  name: move status
+  type: http
+  seq: 4
+
+http:
+  method: PATCH
+  url: "{{HOST}}/v1/{{ROUTE}}/1/move"
+  body:
+    type: json
+    data: |-
+      {
+       "status": "In Progress" 
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
