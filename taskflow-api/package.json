@@ -25,12 +25,9 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/typeorm": "^11.0.0",
-<<<<<<< HEAD
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
-=======
     "joi": "^18.1.2",
->>>>>>> 6baaec5a8459011d689ceb2d23f00d2c3bfec937
     "pg": "^8.20.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",

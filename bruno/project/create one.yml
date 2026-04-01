@@ -1,0 +1,21 @@
+info:
+  name: create one
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{HOST}}/{{ROUTE}}"
+  body:
+    type: json
+    data: |-
+      {
+        "projectName": "cacaprout"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

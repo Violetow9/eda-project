@@ -1,5 +1,4 @@
-import { CreateProjectDto } from '../presentation/create-project.dto';
-import { Project } from './project.entity';
+import {Project} from './project.entity';
 
 export interface ProjectRepository {
     findAll(): Promise<Project[]>;
@@ -10,5 +9,5 @@ export interface ProjectRepository {
 
     remove(id: number): Promise<void>;
 
-  create(project: CreateProjectDto): Promise<Project>;
+    create(project: Partial<Project>): Promise<Project>;
 }
