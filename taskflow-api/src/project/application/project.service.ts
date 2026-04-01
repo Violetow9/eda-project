@@ -5,7 +5,7 @@ import {PROJECT_REPOSITORY} from "./project.constants";
 import {CreateProjectDto} from "../presentation/create-project.dto";
 import type {EventPublisher} from "../../event/application/event-publisher.interface";
 import {EVENT_PUBLISHER} from "../../event/application/event.constants";
-import {ProjectCreatedEvent} from "./project-created.event";
+import {ProjectCreatedEvent} from "../domain/project-created.event";
 
 @Injectable()
 export class ProjectService {
@@ -50,7 +50,7 @@ export class ProjectService {
             projectName: createProjectDto.projectName
         });
 
-        const event = new ProjectCreatedEvent(project.projectName, project.projectName);
+        const event = new ProjectCreatedEvent(project.id, project.projectName);
 
         this.eventPublisher.publish(
             'project.created',
