@@ -62,17 +62,13 @@
 - [x] Publication d'au moins deux domain events (`task.created`, `task.moved`)
 - [x] `ConsoleListener` branché sur ces deux events (affiche event + taskId + horodatage dans la console)
 - [x] Couche repository abstraite (interface + implémentation ORM)
-- [ ] Frontend : page unique, colonnes Kanban, déplacement de tâche (bouton suffit)
+- [x] Frontend : page unique, colonnes Kanban, déplacement de tâche (bouton suffit)
 - [x] Tests unitaires des services (transitions de statut + publication d'events, sans BDD)
-- [ ] Authentification non requise — identifiant utilisateur simulé (`X-User-Id` ou constante)
+- [x] Authentification non requise — identifiant utilisateur simulé (`X-User-Id` ou constante)
 - [x] Procédure de démarrage locale simple et documentée
 - [x] 3 ADR minimum
 - [ ] Schéma d'architecture
 - [ ] Tag `rendu-1` créé et poussé
-
-### Analyse d'impact
-
-> Quels fichiers ont été modifiés ? Lesquels sont restés stables ?
 
 ---
 
