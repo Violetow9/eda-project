@@ -67,8 +67,8 @@
 - [x] Authentification non requise — identifiant utilisateur simulé (`X-User-Id` ou constante)
 - [x] Procédure de démarrage locale simple et documentée
 - [x] 3 ADR minimum
-- [ ] Schéma d'architecture
-- [ ] Tag `rendu-1` créé et poussé
+- [x] Schéma d'architecture
+- [x] Tag `rendu-1` créé et poussé
 
 ---
 
