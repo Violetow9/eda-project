@@ -6,6 +6,8 @@ import {ConfigModule} from "@nestjs/config";
 import {validationConfig} from "./config/validation.config";
 import {ProjectModule} from "./project/application/project.module";
 import {EventModule} from "./event/application/event.module";
+import { TaskService } from './task/application/task.service';
+import { TaskModule } from './task/application/task.module';
 
 @Module({
     imports: [
@@ -18,9 +20,10 @@ import {EventModule} from "./event/application/event.module";
         PostgresModule,
         EventModule,
         ProjectModule
+        TaskModule
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [AppService, TaskService],
 })
 export class AppModule {
 }
