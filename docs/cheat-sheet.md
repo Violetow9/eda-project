@@ -4,6 +4,28 @@ Commandes essentielles pour le projet. À garder sous la main.
 
 ---
 
+## Lancement de l'application
+
+```bash
+## Start all services (postgresql + api + web)
+make up
+
+## Start only the API (postgresql + api)
+make api
+
+## Start only the web app
+make web
+
+## Stop all services
+make down
+
+## Follow logs for all services
+make logs
+
+```
+
+---
+
 ## NestJS CLI
 
 ```bash
