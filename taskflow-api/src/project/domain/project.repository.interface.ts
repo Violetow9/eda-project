@@ -1,3 +1,4 @@
+import { CreateProjectDto } from '../presentation/create-project.dto';
 import { Project } from './project.entity';
 
 export interface ProjectRepository {
@@ -9,5 +10,5 @@ export interface ProjectRepository {
 
   remove(id: number): Promise<void>;
 
-  create(project: Project);
+  create(project: CreateProjectDto): Promise<Project>;
 }

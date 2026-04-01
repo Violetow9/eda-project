@@ -1,33 +1,37 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { ProjectRepository } from '../domain/project.repository.interface';
-import { TypeOrmProject } from '../domain/typeorm-project.entity';
+import { TypeOrmProject } from './typeorm-project.entity';
 
 @Injectable()
 export class TypeOrmProjectRepository implements ProjectRepository {
   constructor(
     @InjectRepository(TypeOrmProject)
-    private projectsRepository: Repository<TypeOrmProject>,
+    private readonly projectsRepository: Repository<TypeOrmProject>,
   ) {}
 
-  findAll(): Promise<TypeOrmProject[]> {
-    return this.projectsRepository.find();
+  async findAll(): Promise<TypeOrmProject[]> {
+    return await this.projectsRepository.find();
   }
 
-  findOne(id: number): Promise<TypeOrmProject | null> {
-    return this.projectsRepository.findOneBy({ id });
+  async findOne(id: number): Promise<TypeOrmProject | null> {
+    return await this.projectsRepository.findOneBy({ id });
   }
 
-  findOneByName(projectName: string): Promise<TypeOrmProject | null> {
-    return this.projectsRepository.findOneBy({ projectName });
+  async findOneByName(projectName: string): Promise<TypeOrmProject | null> {
+    return await this.projectsRepository.findOneBy({ projectName });
   }
 
   async remove(id: number): Promise<void> {
-    await this.projectsRepository.delete(id);
+    const result: DeleteResult = await this.projectsRepository.delete(id);
+
+    if (!result.affected) {
+      throw new NotFoundException(`Project with id ${id} not found`);
+    }
   }
 
-  async create(project: TypeOrmProject) {
-    await this.projectsRepository.save(project);
+  async create(project: TypeOrmProject): Promise<TypeOrmProject> {
+    return await this.projectsRepository.save(project);
   }
 }
