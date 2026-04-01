@@ -1,4 +1,4 @@
-import {Injectable, Logger} from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
 import {ProjectRepository} from '../domain/project.repository.interface';
@@ -8,7 +8,6 @@ import {toDomain} from './project.mapper';
 
 @Injectable()
 export class TypeOrmProjectRepository implements ProjectRepository {
-    private readonly logger = new Logger(TypeOrmProjectRepository.name);
 
     constructor(
         @InjectRepository(TypeOrmProject)
@@ -20,7 +19,6 @@ export class TypeOrmProjectRepository implements ProjectRepository {
         const row = this.repo.create({
             projectName: project.projectName,
         });
-        this.logger.log(`Creating project: ${row.projectName}`);
         await this.repo.save(row);
         return toDomain(row);
     }

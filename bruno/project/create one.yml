@@ -5,7 +5,7 @@ info:
 
 http:
   method: POST
-  url: "{{HOST}}/{{ROUTE}}"
+  url: "{{HOST}}/v1/{{ROUTE}}"
   body:
     type: json
     data: |-

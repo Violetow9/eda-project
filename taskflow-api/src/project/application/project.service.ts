@@ -4,7 +4,6 @@ import type {ProjectRepository} from '../domain/project.repository.interface';
 import {PROJECT_REPOSITORY} from "./project.constants";
 import {CreateProjectDto} from "../presentation/create-project.dto";
 
-
 @Injectable()
 export class ProjectService {
     constructor(
