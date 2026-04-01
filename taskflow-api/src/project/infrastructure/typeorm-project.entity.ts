@@ -8,4 +8,7 @@ export class TypeOrmProject {
     @Column()
     @Index()
     projectName: string;
+
+    @Column('simple-array', { default: '' })
+    members: string[];
 }
