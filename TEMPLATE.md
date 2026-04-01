@@ -4,8 +4,8 @@
 
 | Nom | Prénom | GitHub |
 |-----|--------|--------|
-|     |        |        |
-|     |        |        |
+|Blanchet|Arthur|arthurblanchet59|
+|Ilarraz|Hugo|Violetow9|
 
 ---
 
@@ -37,9 +37,9 @@
 
 | ADR                        | Titre | Statut |
 |----------------------------|-------|--------|
-| [ADR-001](docs/ADR-001.md) |       |        |
-| [ADR-002](docs/ADR-002.md) |       |        |
-| [ADR-003](docs/ADR-003.md) |       |        |
+| [ADR-001](docs/ADR-001.md) | Choix des technologies      |  Accepté      |
+| [ADR-002](docs/ADR-002.md) |Choix de l’architecture applicative|Accepté|
+| [ADR-003](docs/ADR-003.md) |Gestion des événements domaine|Accepté|
 
 ---
 
@@ -57,22 +57,18 @@
 
 ### Checklist
 
-- [ ] Module `project` (controller / service / repository / interface)
-- [ ] Module `task` avec Value Object `TaskStatus` (transitions Todo → In Progress → Done)
-- [ ] Publication d'au moins deux domain events (`task.created`, `task.moved`)
-- [ ] `ConsoleListener` branché sur ces deux events (affiche event + taskId + horodatage dans la console)
-- [ ] Couche repository abstraite (interface + implémentation ORM)
-- [ ] Frontend : page unique, colonnes Kanban, déplacement de tâche (bouton suffit)
-- [ ] Tests unitaires des services (transitions de statut + publication d'events, sans BDD)
-- [ ] Authentification non requise — identifiant utilisateur simulé (`X-User-Id` ou constante)
-- [ ] Procédure de démarrage locale simple et documentée
-- [ ] 3 ADR minimum
-- [ ] Schéma d'architecture
-- [ ] Tag `rendu-1` créé et poussé
-
-### Analyse d'impact
-
-> Quels fichiers ont été modifiés ? Lesquels sont restés stables ?
+- [x] Module `project` (controller / service / repository / interface)
+- [x] Module `task` avec Value Object `TaskStatus` (transitions Todo → In Progress → Done)
+- [x] Publication d'au moins deux domain events (`task.created`, `task.moved`)
+- [x] `ConsoleListener` branché sur ces deux events (affiche event + taskId + horodatage dans la console)
+- [x] Couche repository abstraite (interface + implémentation ORM)
+- [x] Frontend : page unique, colonnes Kanban, déplacement de tâche (bouton suffit)
+- [x] Tests unitaires des services (transitions de statut + publication d'events, sans BDD)
+- [x] Authentification non requise — identifiant utilisateur simulé (`X-User-Id` ou constante)
+- [x] Procédure de démarrage locale simple et documentée
+- [x] 3 ADR minimum
+- [x] Schéma d'architecture
+- [x] Tag `rendu-1` créé et poussé
 
 ---
 
