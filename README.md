@@ -22,7 +22,7 @@ L'idée centrale : votre logique métier ne doit pas savoir si elle est appelée
 | **Ports** | Interfaces (contrats) | Définissent CE QUE le domaine attend, pas COMMENT |
 | **Adaptateurs** | Implémentations concrètes | Branchent le monde réel sur les ports |
 
-![Architecture Hexagonale](images/1*Bpi4Eynu38ayH-8ZE3cSKQ.gif)
+![Architecture Hexagonale](images/schema.gif)
 
 #### Ce que ça change concrètement
 
