@@ -1,6 +1,8 @@
 import {Module} from "@nestjs/common";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {ConfigService} from "@nestjs/config";
+import {TypeOrmProject} from "../project/infrastructure/typeorm-project.entity";
+import {TypeOrmTask} from "../task/infrastructure/typeorm-task.entity";
 
 @Module({
     imports: [
@@ -17,6 +19,7 @@ import {ConfigService} from "@nestjs/config";
                 autoLoadEntities: true,
                 logging: cfg.getOrThrow<boolean>('POSTGRES_LOGGING'),
                 charset: 'utf8mb4',
+                entities: [TypeOrmProject, TypeOrmTask],
             }),
         }),
     ],
