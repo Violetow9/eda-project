@@ -77,6 +77,19 @@
 ### Disruption reçue
 
 > Résumer ici les changements demandés par le "client"
+>
+> Faire une vraie authentification JWT avec inscription connexion token --> migration prévue donc faire en sorte que ce soit adaptable 
+>
+> Mettre du temps réel sur le kanban donc changer les tâches pour tout le monde lors d'un event
+> Gérer du multi-tenant simple
+>
+> Notifications sur les events task.assigned et task.moved sur des canaux email et notif in-app
+>
+> Il faut ajouter des logs stockées en bdd dans ujne table
+>
+> Interface ligne de commande pour créer un projet, une tâche et générer un jeu de données de démo -> Aucune duplication
+>
+> Faire un docker compose
 
 ### Checklist
 
