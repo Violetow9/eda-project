@@ -3,5 +3,7 @@ export class TaskMovedEvent {
         readonly taskId: number,
         readonly from: string,
         readonly to: string,
+        readonly movedBy: string = 'user-1',
+
     ) {}
 }

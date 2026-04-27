@@ -35,7 +35,7 @@ export default function TaskForm({ onCreate, isCreating }: TaskFormProps) {
       onSubmit={handleSubmit}
       className="mb-8 rounded-2xl bg-white p-5 shadow-sm"
     >
-      <h2 className="mb-4 text-xl font-semibold">Créer une tâche</h2>
+      <h2 className="text-black mb-4 text-xl font-semibold">Créer une tâche</h2>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <input
@@ -43,7 +43,7 @@ export default function TaskForm({ onCreate, isCreating }: TaskFormProps) {
           placeholder="Titre de la tâche"
           value={title}
           onChange={(event) => setTitle(event.target.value)}
-          className="rounded-lg border border-gray-300 px-4 py-2 outline-none focus:border-black"
+          className="text-black rounded-lg border border-gray-300 px-4 py-2 outline-none focus:border-black"
         />
 
         <input
@@ -51,7 +51,7 @@ export default function TaskForm({ onCreate, isCreating }: TaskFormProps) {
           placeholder="Assignee user id (optionnel)"
           value={assigneeUserId}
           onChange={(event) => setAssigneeUserId(event.target.value)}
-          className="rounded-lg border border-gray-300 px-4 py-2 outline-none focus:border-black"
+          className="text-black rounded-lg border border-gray-300 px-4 py-2 outline-none focus:border-black"
         />
 
         <button

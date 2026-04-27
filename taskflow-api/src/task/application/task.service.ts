@@ -7,6 +7,8 @@ import type { EventPublisher } from '../../event/application/event-publisher.int
 import { EVENT_PUBLISHER } from '../../event/application/event.constants';
 import { TaskCreatedEvent } from '../domain/task-created.event';
 import { TaskMovedEvent } from '../domain/task-moved.event';
+import { TaskDeletedEvent } from '../domain/task-deleted.event';
+import { TaskAssignedEvent } from '../domain/task-assigned.event';
 
 @Injectable()
 export class TaskService {
@@ -43,7 +45,21 @@ export class TaskService {
             status: TaskStatus.TODO,
         });
 
-        this.eventPublisher.publish('task.created', new TaskCreatedEvent(task.id, task.title, task.projectId));
+    this.eventPublisher.publish(
+      'task.created',
+      new TaskCreatedEvent(task.projectId, task),
+    );
+    if (task.assigneeUserId) {
+      this.eventPublisher.publish(
+        'task.assigned',
+        new TaskAssignedEvent(
+          task.projectId,
+          task.id,
+          task.assigneeUserId,
+          task.title,
+        ),
+      );
+    }
 
         return task;
     }
