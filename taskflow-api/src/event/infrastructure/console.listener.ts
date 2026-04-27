@@ -10,7 +10,7 @@ export class ConsoleListener {
     @OnEvent('task.created')
     handleTaskCreated(payload: TaskCreatedEvent): void {
         this.logger.log(
-            `[task.created] taskId=${payload.taskId} at ${new Date().toISOString()}`,
+            `[task.created] taskId=${payload.task.id}, ${payload.task.assigneeUserId} at ${new Date().toISOString()}`,
         );
     }
 

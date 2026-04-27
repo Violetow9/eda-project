@@ -5,6 +5,7 @@ import {validationConfig} from './config/validation.config';
 import {EventModule} from './event/application/event.module';
 import {ProjectModule} from './project/application/project.module';
 import {TaskModule} from './task/application/task.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
     imports: [
@@ -18,6 +19,8 @@ import {TaskModule} from './task/application/task.module';
         EventModule,
         ProjectModule,
         TaskModule,
+        NotificationModule,
+
     ]
 })
 export class AppModule {

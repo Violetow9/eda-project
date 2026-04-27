@@ -93,13 +93,15 @@
 
 ### Checklist
 
-- [ ] WebSocket temps réel (déplacement de tâche visible par tous)
-- [ ] Notifications multi-canal extensibles (email + in-app)
-- [ ] Multi-tenant basique (workspaceId)
-- [ ] Docker Compose (production + staging)
-- [ ] `docker compose up` fonctionnel depuis un clone propre
+- [x] Authentification JWT (inscription, connexion, token)
+- [x] Temps réel sur le Kanban (déplacement de tâche visible par tous)
+- [ ] Notifications multi-canal extensibles (email + in-app) + préférences par canal
+- [ ] Audit trail automatique (qui a fait quoi et quand)
+- [ ] CLI d'administration (créer projet, créer tâche, seed de démo) — commande documentée dans le README
+- [x] Docker Compose fonctionnel depuis un clone propre
+- [x] `docker compose up` démarre tout avec un `.env.example` documenté
 - [ ] Pipeline CI GitHub Actions au vert
-- [ ] 3 nouveaux ADR (WebSocket, Notifications, Multi-tenant)
+- [ ] 4 nouveaux ADR (auth, temps réel, notifications, audit)
 - [ ] Schéma d'architecture mis à jour
 - [ ] Analyse d'impact : ce qui a changé vs ce qui n'a PAS changé
 - [ ] Tag `rendu-2` créé et poussé
