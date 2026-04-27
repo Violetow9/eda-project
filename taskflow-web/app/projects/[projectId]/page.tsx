@@ -290,6 +290,7 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
         <TaskForm onCreate={handleCreate} isCreating={creating} />
         <NotificationPanel
           userId="user-1"
+          projectId={projectId}
           refreshSignal={notificationRefreshSignal}
         />
 

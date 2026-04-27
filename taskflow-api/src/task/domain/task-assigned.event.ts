@@ -4,5 +4,6 @@ export class TaskAssignedEvent {
     readonly taskId: number,
     readonly assigneeUserId: string,
     readonly title: string,
+    readonly actorId: string = 'system',
   ) {}
 }

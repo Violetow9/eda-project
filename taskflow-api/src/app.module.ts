@@ -6,6 +6,7 @@ import {EventModule} from './event/application/event.module';
 import {ProjectModule} from './project/application/project.module';
 import {TaskModule} from './task/application/task.module';
 import { NotificationModule } from './notification/notification.module';
+import { AuditModule } from './audit/audit.module';
 
 @Module({
     imports: [
@@ -20,6 +21,7 @@ import { NotificationModule } from './notification/notification.module';
         ProjectModule,
         TaskModule,
         NotificationModule,
+        AuditModule,
 
     ]
 })

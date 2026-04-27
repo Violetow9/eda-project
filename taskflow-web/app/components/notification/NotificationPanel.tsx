@@ -1,23 +1,33 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   deleteNotification,
   fetchNotificationPreference,
   fetchNotifications,
   markNotificationAsRead,
   updateNotificationPreference,
-} from '@/app/lib/api/notification-api';
-import { AppNotification, NotificationPreference } from '@/app/types/notification';
+} from "@/app/lib/api/notification-api";
+import {
+  AppNotification,
+  NotificationPreference,
+} from "@/app/types/notification";
 
 type Props = {
   userId: string;
+  projectId: number;
   refreshSignal?: number;
 };
 
-export default function NotificationPanel({ userId, refreshSignal = 0 }: Props) {
+export default function NotificationPanel({
+  userId,
+  projectId,
+  refreshSignal = 0,
+}: Props) {
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
-  const [preference, setPreference] = useState<NotificationPreference | null>(null);
+  const [preference, setPreference] = useState<NotificationPreference | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [savingPreference, setSavingPreference] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,9 +36,12 @@ export default function NotificationPanel({ userId, refreshSignal = 0 }: Props) 
     try {
       setError(null);
       const data = await fetchNotifications(userId);
-      setNotifications(data);
+      const projectNotifications = data.filter((notification) => {
+        return Number(notification.metadata?.projectId) === projectId;
+      });
+      setNotifications(projectNotifications);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur notifications');
+      setError(err instanceof Error ? err.message : "Erreur notifications");
     }
   }
 
@@ -40,10 +53,13 @@ export default function NotificationPanel({ userId, refreshSignal = 0 }: Props) 
         fetchNotifications(userId),
         fetchNotificationPreference(userId),
       ]);
+      const projectNotifications = notificationsData.filter((notification) => {
+        return Number(notification.metadata?.projectId) === projectId;
+      });
       setNotifications(notificationsData);
       setPreference(preferenceData);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur notifications');
+      setError(err instanceof Error ? err.message : "Erreur notifications");
     } finally {
       setLoading(false);
     }
@@ -86,7 +102,7 @@ export default function NotificationPanel({ userId, refreshSignal = 0 }: Props) 
       setPreference(updated);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Erreur préférences notifications',
+        err instanceof Error ? err.message : "Erreur préférences notifications",
       );
     } finally {
       setSavingPreference(false);
@@ -180,8 +196,8 @@ export default function NotificationPanel({ userId, refreshSignal = 0 }: Props) 
               key={notification.id}
               className={`rounded-xl border p-4 ${
                 notification.readAt
-                  ? 'border-gray-200 bg-gray-50'
-                  : 'border-black bg-white'
+                  ? "border-gray-200 bg-gray-50"
+                  : "border-black bg-white"
               }`}
             >
               <div className="flex items-start justify-between gap-4">
