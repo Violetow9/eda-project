@@ -1,7 +1,7 @@
-export class MemberAddedEvent {
+export class ProjectDeletedEvent {
   constructor(
     readonly projectId: number,
-    readonly userId: string,
+    readonly projectName: string,
     readonly actorId: string = 'system',
   ) {}
 }

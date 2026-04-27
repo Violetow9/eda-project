@@ -33,22 +33,24 @@ export class TaskService {
     return this.taskRepository.findAllByProjectId(projectId);
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: number, actorId = 'system'): Promise<void> {
     const task = await this.getById(id);
 
     if (!task) {
       throw new NotFoundException(`Task with id ${id} not found`);
     }
-    
+
     this.eventPublisher.publish(
       'task.deleted',
-      new TaskDeletedEvent(task.projectId, id),
+      new TaskDeletedEvent(task.projectId, id, actorId),
     );
 
     return this.taskRepository.remove(id);
   }
 
   async create(dto: CreateTaskDto): Promise<Task> {
+    const actorId = dto.actorId ?? 'system';
+
     const task = await this.taskRepository.create({
       title: dto.title,
       projectId: dto.projectId,
@@ -58,7 +60,7 @@ export class TaskService {
 
     this.eventPublisher.publish(
       'task.created',
-      new TaskCreatedEvent(task.projectId, task),
+      new TaskCreatedEvent(task.projectId, task, actorId),
     );
     if (task.assigneeUserId) {
       this.eventPublisher.publish(
@@ -68,14 +70,15 @@ export class TaskService {
           task.id,
           task.assigneeUserId,
           task.title,
+          actorId,
         ),
       );
-}
+    }
 
     return task;
   }
 
-  async moveTask(id: number, newStatus: TaskStatus): Promise<Task> {
+  async moveTask(id: number, newStatus: TaskStatus, actorId = 'system'): Promise<Task> {
     const task = await this.getById(id);
     const previousStatus = task.status.toString();
     const moved = task.move(newStatus);
@@ -88,6 +91,7 @@ export class TaskService {
         saved.id,
         previousStatus,
         saved.status.toString(),
+        actorId,
       ),
     );
 
