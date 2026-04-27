@@ -56,7 +56,7 @@ export default function NotificationPanel({
       const projectNotifications = notificationsData.filter((notification) => {
         return Number(notification.metadata?.projectId) === projectId;
       });
-      setNotifications(notificationsData);
+      setNotifications(projectNotifications);
       setPreference(preferenceData);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur notifications");
