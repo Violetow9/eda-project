@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import KanbanBoard from "@/app/components/task/KanbanBoard";
 import TaskForm from "@/app/components/task/TaskForm";
@@ -8,13 +8,9 @@ import { Project } from "@/app/types/project";
 import { Task, TaskStatus } from "@/app/types/task";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
-import {
-  fetchTasksByProject,
-  createTask,
-  moveTask,
-  deleteTask,
-} from "@/app/lib/api/task-api";
+
 import NotificationPanel from "@/app/components/notification/NotificationPanel";
+import { fetchTasksByProject, createTask, moveTask, deleteTask } from "@/app/lib/api/task-api";
 
 type ProjectPageProps = {
   params: Promise<{
@@ -49,7 +45,7 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
       setTasks(tasksData);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Erreur lors du chargement',
+        err instanceof Error ? err.message : "Erreur lors du chargement",
       );
     } finally {
       setLoading(false);
@@ -57,8 +53,8 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
   }
 
   useEffect(() => {
-    if (!Number.isNaN(projectId)) {
-      loadData();
+    if (Number.isNaN(projectId)) {
+      return;
     }
 
     loadData();
@@ -200,7 +196,7 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
       setNotificationRefreshSignal((current) => current + 1);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Erreur lors de la création',
+        err instanceof Error ? err.message : "Erreur lors de la création",
       );
     } finally {
       setCreating(false);
@@ -215,11 +211,13 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
       const updatedTask = await moveTask(task.id, nextStatus);
 
       setTasks((current) =>
-        current.map((item) => (item.id === updatedTask.id ? updatedTask : item)),
+        current.map((item) =>
+          item.id === updatedTask.id ? updatedTask : item,
+        ),
       );
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Erreur lors du déplacement',
+        err instanceof Error ? err.message : "Erreur lors du déplacement",
       );
     } finally {
       setMovingTaskId(null);
@@ -235,7 +233,7 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
       setTasks((current) => current.filter((task) => task.id !== taskId));
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Erreur lors de la suppression',
+        err instanceof Error ? err.message : "Erreur lors de la suppression",
       );
     } finally {
       setDeletingTaskId(null);
@@ -255,7 +253,7 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
   if (!project) {
     return (
       <main className="min-h-screen bg-gray-100 p-8">
-        <div className="mx-auto text-black  max-w-7xl">
+        <div className="mx-auto text-black max-w-7xl">
           <p className="text-4xl">Projet introuvable.</p>
           <Link
             href="/projects"
@@ -279,7 +277,7 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
             ← Retour aux projets
           </Link>
 
-          <h1 className="text-3xl font-bold text-black">{project.projectName}</h1>
+          <h1 className="text-3xl font-bold">{project.projectName}</h1>
           <p className="mt-2 text-gray-600">Projet #{project.id}</p>
         </div>
 
@@ -289,12 +287,11 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
           </div>
         )}
 
+        <TaskForm onCreate={handleCreate} isCreating={creating} />
         <NotificationPanel
           userId="user-1"
           refreshSignal={notificationRefreshSignal}
         />
-
-        <TaskForm onCreate={handleCreate} isCreating={creating} />
 
         <KanbanBoard
           tasks={tasks}
@@ -307,3 +304,7 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
     </main>
   );
 }
+function setNotificationRefreshSignal(arg0: (current: any) => any) {
+  throw new Error("Function not implemented.");
+}
+

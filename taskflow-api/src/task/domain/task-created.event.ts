@@ -1,7 +1,8 @@
+import { Task } from "./task.entity";
+
 export class TaskCreatedEvent {
-    constructor(
-        readonly taskId: number,
-        readonly title: string,
-        readonly projectId: number,
-    ) {}
+  constructor(
+    readonly projectId: number,
+    readonly task: Task,
+  ) {}
 }

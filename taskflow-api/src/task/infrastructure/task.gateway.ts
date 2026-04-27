@@ -8,12 +8,12 @@ import {
 } from '@nestjs/websockets';
 import { Injectable } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
-import { ProjectAccessService } from '../application/project-access.service';
 import { TaskCreatedEvent } from '../domain/task-created.event';
 import { TaskMovedEvent } from '../domain/task-moved.event';
 import { TaskDeletedEvent } from '../domain/task-deleted.event';
 import { Task } from '../domain/task.entity';
 import { TaskAssignedEvent } from '../domain/task-assigned.event';
+import { ProjectAccessService } from '../application/project-access.service';
 
 @WebSocketGateway({
   cors: {
@@ -68,7 +68,7 @@ export class TaskGateway {
       .to(this.getProjectRoom(payload.projectId))
       .emit('task.created', payload);
   }
-    emitTaskAssigned(payload: TaskAssignedEvent): void {
+  emitTaskAssigned(payload: TaskAssignedEvent): void {
     this.server
       .to(this.getProjectRoom(payload.projectId))
       .emit('task.assigned', payload);
