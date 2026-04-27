@@ -4,10 +4,25 @@ Commandes essentielles pour le projet. À garder sous la main.
 
 ---
 
+## CLI d’administration
+
+La CLI s’exécute via Docker, sans installation locale de Node.
+Il faut tout d'abord 
+
+```bash
+./cli.sh create-project "Projet démo"
+./cli.sh create-task 1 "Ma tâche" user-1
+./cli.sh seed-demo
+
+.\cli.ps1 create-project "Projet Démo"
+.\cli.ps1 create-task 1 "Ma première tâche" user-1
+.\cli.ps1 seed-demo
+```
+
 ## Lancement de l'application
 
 ```bash
-## Start all services (postgresql + api + web)
+## Start all services (postgresql + api + web + smtp)
 make up
 
 ## Start only the API (postgresql + api)

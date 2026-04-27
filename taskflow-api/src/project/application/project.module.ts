@@ -6,15 +6,16 @@ import { PROJECT_REPOSITORY } from './project.constants';
 import { TypeOrmProjectRepository } from '../infrastructure/typeorm-project.repository';
 import { TypeOrmProject } from '../infrastructure/typeorm-project.entity';
 import { EventModule } from '../../event/application/event.module';
+import { CreateProjectUseCase } from './use-cases/create-project.use-case';
 
 @Module({
     imports: [TypeOrmModule.forFeature([TypeOrmProject]), EventModule],
     providers: [
         TypeOrmProjectRepository,
         { provide: PROJECT_REPOSITORY, useClass: TypeOrmProjectRepository },
-        ProjectService,
+        ProjectService, CreateProjectUseCase
     ],
-    exports: [PROJECT_REPOSITORY, ProjectService],
+    exports: [PROJECT_REPOSITORY, ProjectService, CreateProjectUseCase],
     controllers: [ProjectController],
 })
 export class ProjectModule {}

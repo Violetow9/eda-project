@@ -4,9 +4,9 @@
 up:
 	docker compose up
 
-## Start only the API (postgresql + api)
+## Start only the API (postgresql + api + mailpit)
 api:
-	docker compose up postgresql api
+	docker compose up postgresql api mailpit
 
 ## Start only the web app
 web:

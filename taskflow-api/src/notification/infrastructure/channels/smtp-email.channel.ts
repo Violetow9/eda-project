@@ -78,8 +78,7 @@ export class SmtpEmailChannel implements NotificationChannel {
   }
 
   private resolveEmailFromUserId(userId: string): string {
-    // Phase 1: no real User module yet. If the simulated userId is already an email, use it.
-    // Otherwise, create a deterministic demo address so the channel remains usable.
+
     return userId.includes('@') ? userId : `${userId}@taskflow.local`;
   }
 
