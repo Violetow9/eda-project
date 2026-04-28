@@ -16,7 +16,9 @@ async function bootstrap() {
         const [projectName] = args;
 
         if (!projectName) {
-          throw new Error('Usage: npm run cli -- create-project "Project name"');
+          throw new Error(
+            'Usage: npm run cli -- create-project "Project name"',
+          );
         }
 
         await cli.createProject(projectName);
@@ -59,4 +61,4 @@ async function bootstrap() {
   }
 }
 
-bootstrap();
+void bootstrap();

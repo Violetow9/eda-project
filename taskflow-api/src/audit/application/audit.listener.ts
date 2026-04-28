@@ -52,12 +52,12 @@ export class AuditListener {
       actorId: event.actorId,
       action: 'task.created',
       entityType: 'Task',
-      entityId: event.task.id,
+      entityId: event.taskId,
       metadata: {
         projectId: event.projectId,
-        title: event.task.title,
-        status: event.task.status.toString(),
-        assigneeUserId: event.task.assigneeUserId,
+        title: event.title,
+        status: event.status,
+        assigneeUserId: event.assigneeUserId,
       },
     });
   }

@@ -12,7 +12,9 @@ http:
       {
         "projectName": "cacaprout"
       }
-  auth: inherit
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmY2I3MzYyNi1mYjM5LTQ4NTMtOTA5Yy01NGE3MjdmYzljMjIiLCJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc1MTQyMDAzLCJleHAiOjE3NzUxNDI5MDN9.v4d26vFIQ_sA7PaxoeVUvVbOgSPnP_1afk3Lm-P_3XQ
 
 settings:
   encodeUrl: true

@@ -1,4 +1,8 @@
-export class TaskAssignedEvent {
+import { DomainEvent } from '../../event/domain/domain-event.interface';
+
+export class TaskAssignedEvent implements DomainEvent {
+  readonly eventType = 'task.assigned';
+
   constructor(
     readonly projectId: number,
     readonly taskId: number,

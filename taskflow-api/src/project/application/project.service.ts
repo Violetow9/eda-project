@@ -2,12 +2,12 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Project } from '../domain/project.entity';
 import type { ProjectRepository } from '../domain/project.repository.interface';
 import { PROJECT_REPOSITORY } from './project.constants';
-import { CreateProjectDto } from '../presentation/create-project.dto';
 import type { EventPublisher } from '../../event/application/event-publisher.interface';
 import { EVENT_PUBLISHER } from '../../event/application/event.constants';
 import { ProjectCreatedEvent } from '../domain/project-created.event';
 import { MemberAddedEvent } from '../domain/member-added.event';
 import { ProjectDeletedEvent } from '../domain/project-deleted.event';
+import { CreateProjectCommand } from './create-project.command';
 
 @Injectable()
 export class ProjectService {
@@ -29,26 +29,24 @@ export class ProjectService {
     return project;
   }
 
-  async delete(id: number, actorId = 'system'): Promise<void> {
+  async delete(id: number, actorId: string = 'system'): Promise<void> {
     const project = await this.getById(id);
-
+    await this.projectRepository.remove(id);
     this.eventPublisher.publish(
-      'project.deleted',
       new ProjectDeletedEvent(project.id, project.projectName, actorId),
     );
-    return this.projectRepository.remove(id);
   }
 
-  async create(dto: CreateProjectDto): Promise<Project> {
+  async create(command: CreateProjectCommand): Promise<Project> {
     const project = await this.projectRepository.create({
-      projectName: dto.projectName,
+      projectName: command.projectName,
+      members: [command.creatorId],
     });
     this.eventPublisher.publish(
-      'project.created',
       new ProjectCreatedEvent(
         project.id,
         project.projectName,
-        dto.actorId ?? 'system',
+        command.actorId ?? command.creatorId,
       ),
     );
     return project;
@@ -57,16 +55,14 @@ export class ProjectService {
   async addMember(
     projectId: number,
     userId: string,
-    actorId = 'system',
+    actorId: string = 'system',
   ): Promise<Project> {
     const project = await this.getById(projectId);
     const updated = project.addMember(userId);
     const saved = await this.projectRepository.update(updated);
     this.eventPublisher.publish(
-      'member.added',
       new MemberAddedEvent(saved.id, userId, actorId),
     );
-
     return saved;
   }
 }

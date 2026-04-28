@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ProjectAccessService {
-  async canAccessProject(input: {
+  canAccessProject(_input: {
     userId: string;
     projectId: number;
   }): Promise<boolean> {
-    return true;
+    return Promise.resolve(true);
   }
 }

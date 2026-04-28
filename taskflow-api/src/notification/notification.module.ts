@@ -21,7 +21,10 @@ import {
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([TypeOrmNotification, TypeOrmNotificationPreference]),
+    TypeOrmModule.forFeature([
+      TypeOrmNotification,
+      TypeOrmNotificationPreference,
+    ]),
     ProjectModule,
   ],
   controllers: [NotificationPreferenceController, NotificationController],

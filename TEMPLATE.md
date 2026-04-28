@@ -24,22 +24,22 @@
 
 ## Architecture — Vue d'ensemble
 
-> Insérer ici un schéma d'architecture (image ou dessin libre)
+Schéma détaillé : [`docs/architecture.md`](docs/architecture.md)
 
 ---
 
 ## ADR — Architecture Decision Records
 
-> Chaque ADR est un fichier séparé dans `docs/`. Utilisez le template [`docs/ADR-template.md`](docs/ADR-template.md) et
-> l'exemple [`docs/ADR-000.md`](docs/ADR-000.md).
->
-> Listez ici vos ADR une fois créés :
-
 | ADR                        | Titre | Statut |
 |----------------------------|-------|--------|
 | [ADR-001](docs/ADR-001.md) | Choix des technologies      |  Accepté      |
-| [ADR-002](docs/ADR-002.md) |Choix de l’architecture applicative|Accepté|
-| [ADR-003](docs/ADR-003.md) |Gestion des événements domaine|Accepté|
+| [ADR-002](docs/ADR-002.md) | Choix de l'architecture applicative | Accepté |
+| [ADR-003](docs/ADR-003.md) | Gestion des événements domaine | Accepté |
+| [ADR-004](docs/ADR-004.md) | Système de notifications événementiel | Accepté |
+| [ADR-005](docs/ADR-005.md) | Audit trail des actions Task et Project | Accepté |
+| [ADR-006](docs/ADR-006.md) | CLI d'administration comme adaptateur entrant | Accepté |
+| [ADR-007](docs/ADR-007.md) | Authentification JWT découplée du métier | Accepté |
+| [ADR-008](docs/ADR-008.md) | Temps réel via WebSocket scopé par projet | Accepté |
 
 ---
 
@@ -47,8 +47,8 @@
 
 | Phase   | Tag attendu | Statut |
 |---------|-------------|--------|
-| Rendu 1 | `rendu-1`   |        |
-| Rendu 2 | `rendu-2`   |        |
+| Rendu 1 | `rendu-1`   | Poussé |
+| Rendu 2 | `rendu-2`   | À pousser à la fin de la Phase 2 |
 | Rendu 3 | `rendu-3`   |        |
 
 ---
@@ -76,40 +76,52 @@
 
 ### Disruption reçue
 
-> Résumer ici les changements demandés par le "client"
->
-> Faire une vraie authentification JWT avec inscription connexion token --> migration prévue donc faire en sorte que ce soit adaptable 
->
-> Mettre du temps réel sur le kanban donc changer les tâches pour tout le monde lors d'un event
-> Gérer du multi-tenant simple
->
-> Notifications sur les events task.assigned et task.moved sur des canaux email et notif in-app
->
-> Il faut ajouter des logs stockées en bdd dans ujne table
->
-> Interface ligne de commande pour créer un projet, une tâche et générer un jeu de données de démo -> Aucune duplication
->
-> Faire un docker compose
+Cinq chantiers produit + une contrainte ops :
+
+1. **Authentification JWT** (inscription, connexion, token), pensée pour un futur SSO sans toucher au métier.
+2. **Temps réel sur le Kanban**, scopé par projet, mécanisme remplaçable sans réécrire le métier.
+3. **Notifications événementielles** sur `task.assigned` et `task.moved`, canaux email + in-app, préférences par utilisateur, ouvert à de nouveaux canaux (Slack/Teams/SMS).
+4. **Audit trail automatique** sur toutes les écritures Task/Project, sans polluer le métier, stockage remplaçable.
+5. **CLI d'administration** réutilisant les cas d'usage applicatifs, sans dupliquer la logique.
+6. **Mise en production** : `docker compose up` depuis un clone propre, `.env`/`.env.example`.
 
 ### Checklist
 
 - [x] Authentification JWT (inscription, connexion, token)
-- [x] Temps réel sur le Kanban (déplacement de tâche visible par tous)
-- [ ] Notifications multi-canal extensibles (email + in-app) + préférences par canal
-- [ ] Audit trail automatique (qui a fait quoi et quand)
-- [ ] CLI d'administration (créer projet, créer tâche, seed de démo) — commande documentée dans le README
+- [x] Temps réel sur le Kanban (déplacement de tâche visible par tous, scope projet)
+- [x] Notifications multi-canal extensibles (email + in-app) + préférences par canal
+- [x] Audit trail automatique (qui a fait quoi et quand)
+- [x] CLI d'administration (créer projet, créer tâche, seed de démo) — commande documentée dans le README
 - [x] Docker Compose fonctionnel depuis un clone propre
 - [x] `docker compose up` démarre tout avec un `.env.example` documenté
-- [ ] Pipeline CI GitHub Actions au vert
-- [ ] 4 nouveaux ADR (auth, temps réel, notifications, audit)
-- [ ] Schéma d'architecture mis à jour
-- [ ] Analyse d'impact : ce qui a changé vs ce qui n'a PAS changé
+- [x] Pipeline CI GitHub Actions au vert
+- [x] 5 nouveaux ADR (ADR-004 notifications, ADR-005 audit, ADR-006 CLI, ADR-007 auth, ADR-008 temps réel)
+- [x] Schéma d'architecture mis à jour
+- [x] Analyse d'impact : ce qui a changé vs ce qui n'a PAS changé
 - [ ] Tag `rendu-2` créé et poussé
 
 ### Analyse d'impact
 
-> Ce qui a changé :
-> Ce qui n'a PAS changé :
+**Ce qui a changé :**
+
+- Ajout d'un module `auth/` (presentation + application + infrastructure + domain) avec JWT, `JwtAuthGuard` global, `RolesGuard`, décorateurs `@Public()` / `@CurrentUser()` / `@Roles()`.
+- Ajout d'un module `user/` (entités, repository, service) consommé par `AuthService`.
+- Ajout d'un module `notification/` complet (channels `email` SMTP + `in_app`, listener `task.moved` / `task.assigned`, préférences user, contrôleurs REST).
+- Ajout d'un module `audit/` (listener sur les 7 events métier, repository TypeORM, contrôleur de consultation).
+- Ajout d'un module `cli/` avec `AdminCliCommand` (création projet/tâche, seed demo).
+- Ajout d'une `TaskGateway` Socket.IO (rooms `project:${id}`) + `ServerListener` qui relaie les events sur le WebSocket.
+- Events enrichis avec `actorId` pour permettre la traçabilité demandée par l'audit.
+- Controllers `TaskController` et `ProjectController` reçoivent `@CurrentUser()` et propagent l'`actorId` aux services.
+- `docker-compose.yml` : ajout de `mailpit` pour capturer les emails en local, ajout du service `web`.
+- `.github/workflows/ci.yml` : pipeline lint + test + build pour `taskflow-api` et `taskflow-web`.
+
+**Ce qui n'a PAS changé :**
+
+- Le **domaine** `Task`, `Project` et leur Value Object `TaskStatus` : les règles de transition Todo → In Progress → Done, la règle "pas de doublon de membre", l'immutabilité des entités sont identiques au Rendu 1.
+- Les **interfaces de repository** (`TaskRepository`, `ProjectRepository`) sont stables — les nouveaux modules ont leurs propres ports.
+- Les **tests unitaires** existants des services métier restent inchangés ; aucun test ne touche la base.
+- **Aucune** des nouvelles fonctionnalités (auth, temps réel, notifications, audit, CLI) n'est apparue dans `TaskService` ou `ProjectService` autrement que par la propagation d'un `actorId`. Le métier ne connaît pas l'email, le SMTP, le WebSocket, ni le canal Slack futur.
+- L'ajout d'un canal de notification supplémentaire ne touchera ni `TaskService`, ni `ProjectService`, ni `TaskController` : il s'agit d'ajouter un nouvel adaptateur `NotificationChannel` et de l'enregistrer dans `NotificationModule`.
 
 ---
 
@@ -117,14 +129,14 @@
 
 ### Disruptions reçues
 
-> Résumer ici les changements demandés par le "client"
+> À résumer ici lors de la Phase 3.
 
 ### Checklist
 
-- [ ] Circuit breaker sur le canal email
+- [ ] Résilience des consommateurs de notifications (canal email isolable)
 - [ ] API v1 + v2 coexistantes et rétrocompatibles
-- [ ] Audit trail automatique (qui a fait quoi et quand)
-- [ ] ADR résilience + versioning + audit
+- [ ] Analyse d'impact multi-workspace
+- [ ] ADR résilience + versioning + multi-workspace
 - [ ] Tableau des scénarios de panne
 - [ ] Tag `rendu-3` créé et poussé
 
@@ -134,7 +146,6 @@
 |--------------------------|----------------------------------------------|-----------------------|
 | Canal email indisponible | Le système continue, message mis en file     |                       |
 | WebSocket coupé          | Kanban fonctionnel en mode requête classique |                       |
-|                          |                                              |                       |
 
 ### Analyse d'impact
 

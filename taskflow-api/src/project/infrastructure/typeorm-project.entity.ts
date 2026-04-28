@@ -1,14 +1,14 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'projects' })
 export class TypeOrmProject {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    @Index()
-    projectName: string;
+  @Column()
+  @Index()
+  projectName: string;
 
-    @Column('simple-array', { default: '' })
-    members: string[];
+  @Column('simple-array', { default: '' })
+  members: string[];
 }

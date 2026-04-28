@@ -1,20 +1,20 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'tasks' })
 export class TypeOrmTask {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    title: string;
+  @Column()
+  title: string;
 
-    @Column()
-    status: string;
+  @Column()
+  status: string;
 
-    @Column()
-    @Index()
-    projectId: number;
+  @Column()
+  @Index()
+  projectId: number;
 
-    @Column({ nullable: true, type: 'varchar' })
-    assigneeUserId: string | null;
+  @Column({ nullable: true, type: 'varchar' })
+  assigneeUserId: string | null;
 }

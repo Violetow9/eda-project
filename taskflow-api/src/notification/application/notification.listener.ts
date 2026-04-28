@@ -5,7 +5,6 @@ import { ProjectService } from '../../project/application/project.service';
 import { TaskMovedEvent } from 'src/task/domain/task-moved.event';
 import { TaskAssignedEvent } from 'src/task/domain/task-assigned.event';
 
-
 @Injectable()
 export class NotificationListener {
   constructor(
@@ -15,12 +14,11 @@ export class NotificationListener {
 
   @OnEvent('task.moved')
   async handleTaskMoved(event: TaskMovedEvent): Promise<void> {
-
     const project = await this.projectService.getById(event.projectId);
     const members =
-    project.members && project.members.length > 0
-      ? project.members
-      : ['user-1'];
+      project.members && project.members.length > 0
+        ? project.members
+        : ['user-1'];
 
     await Promise.all(
       members.map((memberUserId) =>
@@ -28,7 +26,7 @@ export class NotificationListener {
           userId: memberUserId,
           type: 'task.moved',
           title: 'Task moved',
-          message: `La tâche ${event.taskId} a été déplacée par ${event.actorId ?? 'user-1'}`, 
+          message: `La tâche ${event.taskId} a été déplacée par ${event.actorId ?? 'user-1'}`,
           metadata: {
             projectId: event.projectId,
             taskId: event.taskId,
@@ -43,12 +41,11 @@ export class NotificationListener {
 
   @OnEvent('task.assigned')
   async handleTaskAssigned(event: TaskAssignedEvent): Promise<void> {
-
     await this.notificationService.notifyUser({
       userId: event.assigneeUserId,
       type: 'task.assigned',
       title: 'Task assigned',
-      message: `La tâche ${event.taskId} a été assignée à ${event.assigneeUserId}`, 
+      message: `La tâche ${event.taskId} a été assignée à ${event.assigneeUserId}`,
       metadata: {
         projectId: event.projectId,
         taskId: event.taskId,

@@ -5,8 +5,10 @@ info:
 
 http:
   method: GET
-  url: "{{HOST}}/{{ROUTE}}"
-  auth: inherit
+  url: "{{HOST}}/v1/{{ROUTE}}/1"
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmY2I3MzYyNi1mYjM5LTQ4NTMtOTA5Yy01NGE3MjdmYzljMjIiLCJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc1MTM2MTgxLCJleHAiOjE3NzUxMzcwODF9.dGe5d5yMU3NojCkuZhd9LpsgOUY94Yj8oCWLV6eGMKY
 
 settings:
   encodeUrl: true
