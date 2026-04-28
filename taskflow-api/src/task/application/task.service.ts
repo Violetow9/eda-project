@@ -81,6 +81,7 @@ export class TaskService {
     newStatus: TaskStatus,
     actorId: string = 'system',
   ): Promise<Task> {
+
     const task = await this.getById(id);
     const previousStatus = task.status.toString();
     const moved = task.move(newStatus);

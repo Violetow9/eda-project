@@ -29,7 +29,10 @@ export class TypeOrmNotificationRepository implements NotificationRepository {
 
   async findByUserId(userId: string): Promise<Notification[]> {
     const notifications = await this.repository.find({
-      where: { userId },
+    where: [
+      { userId },
+      { type: 'task.moved' },
+    ],      
       order: { createdAt: 'DESC' },
     });
 
