@@ -1,19 +1,18 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateTaskDto {
-    @IsNotEmpty()
-    @IsString()
-    title: string;
+  @IsNotEmpty()
+  @IsString()
+  title: string;
 
-    @IsNumber()
-    projectId: number;
+  @IsNumber()
+  projectId: number;
 
-    @IsOptional()
-    @IsString()
-    assigneeUserId?: string | null;
+  @IsOptional()
+  @IsString()
+  assigneeUserId?: string | null;
 
-    
-    @IsOptional()
-    @IsString()
-    actorId?: string;
+  @IsOptional()
+  @IsString()
+  actorId?: string;
 }

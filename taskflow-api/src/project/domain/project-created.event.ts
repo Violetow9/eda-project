@@ -1,11 +1,11 @@
-import {DomainEvent} from '../../event/domain/domain-event.interface';
+import { DomainEvent } from '../../event/domain/domain-event.interface';
 
 export class ProjectCreatedEvent implements DomainEvent {
-    readonly eventType = 'project.created';
+  readonly eventType = 'project.created';
 
-    constructor(
-        readonly projectId: number,
-        readonly projectName: string,
-        readonly actorId: string = 'system',
-    ) {}
+  constructor(
+    readonly projectId: number,
+    readonly projectName: string,
+    readonly actorId: string = 'system',
+  ) {}
 }

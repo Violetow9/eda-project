@@ -1,3 +1,3 @@
 export class TokenPair {
-    constructor(readonly accessToken: string) {}
+  constructor(readonly accessToken: string) {}
 }

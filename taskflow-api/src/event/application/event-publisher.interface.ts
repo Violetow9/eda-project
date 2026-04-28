@@ -1,5 +1,5 @@
-import {DomainEvent} from '../domain/domain-event.interface';
+import { DomainEvent } from '../domain/domain-event.interface';
 
 export interface EventPublisher {
-    publish(event: DomainEvent): void;
+  publish(event: DomainEvent): void;
 }

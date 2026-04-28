@@ -45,7 +45,9 @@ export class SmtpEmailChannel implements NotificationChannel {
       text: `${input.message}\n\nMetadata:\n${JSON.stringify(input.metadata ?? {}, null, 2)}`,
     });
 
-    this.logger.log(`[EMAIL:SENT] to=${to} type=${input.type} subject="${input.title}"`);
+    this.logger.log(
+      `[EMAIL:SENT] to=${to} type=${input.type} subject="${input.title}"`,
+    );
   }
 
   private getConfig():
@@ -78,7 +80,6 @@ export class SmtpEmailChannel implements NotificationChannel {
   }
 
   private resolveEmailFromUserId(userId: string): string {
-
     return userId.includes('@') ? userId : `${userId}@taskflow.local`;
   }
 
@@ -109,14 +110,22 @@ export class SmtpEmailChannel implements NotificationChannel {
         await once(socket, 'secureConnect');
         await this.command(socket, `EHLO taskflow.local`);
       } catch (error) {
-        this.logger.warn(`SMTP STARTTLS unavailable, continuing without TLS: ${String(error)}`);
+        this.logger.warn(
+          `SMTP STARTTLS unavailable, continuing without TLS: ${String(error)}`,
+        );
       }
     }
 
     if (input.username && input.password) {
       await this.command(socket, 'AUTH LOGIN');
-      await this.command(socket, Buffer.from(input.username).toString('base64'));
-      await this.command(socket, Buffer.from(input.password).toString('base64'));
+      await this.command(
+        socket,
+        Buffer.from(input.username).toString('base64'),
+      );
+      await this.command(
+        socket,
+        Buffer.from(input.password).toString('base64'),
+      );
     }
 
     await this.command(socket, `MAIL FROM:<${input.from}>`);
@@ -139,12 +148,17 @@ export class SmtpEmailChannel implements NotificationChannel {
     socket.end();
   }
 
-  private async command(socket: net.Socket | tls.TLSSocket, command: string): Promise<string> {
+  private async command(
+    socket: net.Socket | tls.TLSSocket,
+    command: string,
+  ): Promise<string> {
     socket.write(`${command}\r\n`);
     return this.readResponse(socket);
   }
 
-  private async readResponse(socket: net.Socket | tls.TLSSocket): Promise<string> {
+  private async readResponse(
+    socket: net.Socket | tls.TLSSocket,
+  ): Promise<string> {
     const chunks: Buffer[] = [];
 
     while (true) {

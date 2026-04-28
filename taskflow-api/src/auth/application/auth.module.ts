@@ -10,28 +10,28 @@ import { TOKEN_PROVIDER } from './auth.constants';
 import { UserModule } from '../../user/application/user.module';
 
 @Module({
-    imports: [
-        UserModule,
-        JwtModule.registerAsync({
-            imports: [ConfigModule],
-            inject: [ConfigService],
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            useFactory: (config: ConfigService): any => ({
-                secret: config.getOrThrow<string>('JWT_ACCESS_SECRET'),
-                signOptions: {
-                    expiresIn: config.get<string>('JWT_ACCESS_TTL', '30d'),
-                },
-            }),
-        }),
-    ],
-    providers: [
-        JwtTokenProvider,
-        { provide: TOKEN_PROVIDER, useClass: JwtTokenProvider },
-        AuthService,
-        JwtAuthGuard,
-        RolesGuard,
-    ],
-    controllers: [AuthController],
-    exports: [TOKEN_PROVIDER, JwtAuthGuard, RolesGuard],
+  imports: [
+    UserModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+
+      useFactory: (config: ConfigService): any => ({
+        secret: config.getOrThrow<string>('JWT_ACCESS_SECRET'),
+        signOptions: {
+          expiresIn: config.get<string>('JWT_ACCESS_TTL', '30d'),
+        },
+      }),
+    }),
+  ],
+  providers: [
+    JwtTokenProvider,
+    { provide: TOKEN_PROVIDER, useClass: JwtTokenProvider },
+    AuthService,
+    JwtAuthGuard,
+    RolesGuard,
+  ],
+  controllers: [AuthController],
+  exports: [TOKEN_PROVIDER, JwtAuthGuard, RolesGuard],
 })
 export class AuthModule {}

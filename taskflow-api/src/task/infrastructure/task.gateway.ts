@@ -11,7 +11,6 @@ import { Server, Socket } from 'socket.io';
 import { TaskCreatedEvent } from '../domain/task-created.event';
 import { TaskMovedEvent } from '../domain/task-moved.event';
 import { TaskDeletedEvent } from '../domain/task-deleted.event';
-import { Task } from '../domain/task.entity';
 import { TaskAssignedEvent } from '../domain/task-assigned.event';
 import { ProjectAccessService } from '../application/project-access.service';
 
@@ -30,6 +29,7 @@ export class TaskGateway {
   private getProjectRoom(projectId: number): string {
     return `project:${projectId}`;
   }
+
   @SubscribeMessage('project.join')
   async handleProjectJoin(
     @MessageBody() payload: { projectId: number; userId: string },
@@ -44,40 +44,49 @@ export class TaskGateway {
       throw new WsException('Forbidden project');
     }
 
-    client.join(this.getProjectRoom(payload.projectId));
-    console.log('join room project:', payload.projectId);
+    void client.join(this.getProjectRoom(payload.projectId));
     return {
       joined: true,
       room: this.getProjectRoom(payload.projectId),
     };
   }
 
-  emitTaskMoved(payload: {
-    projectId: number;
-    taskId: number;
-    from: string;
-    to: string;
-  }): void {
-    this.server
-      .to(this.getProjectRoom(payload.projectId))
-      .emit('task.moved', payload);
+  emitTaskCreated(event: TaskCreatedEvent): void {
+    this.server.to(this.getProjectRoom(event.projectId)).emit('task.created', {
+      projectId: event.projectId,
+      task: {
+        id: event.taskId,
+        title: event.title,
+        status: event.status,
+        projectId: event.projectId,
+        assigneeUserId: event.assigneeUserId,
+      },
+    });
   }
 
-  emitTaskCreated(payload: { projectId: number; task: Task }): void {
-    this.server
-      .to(this.getProjectRoom(payload.projectId))
-      .emit('task.created', payload);
-  }
-  emitTaskAssigned(payload: TaskAssignedEvent): void {
-    this.server
-      .to(this.getProjectRoom(payload.projectId))
-      .emit('task.assigned', payload);
+  emitTaskMoved(event: TaskMovedEvent): void {
+    this.server.to(this.getProjectRoom(event.projectId)).emit('task.moved', {
+      projectId: event.projectId,
+      taskId: event.taskId,
+      from: event.from,
+      to: event.to,
+      movedBy: event.actorId,
+    });
   }
 
+  emitTaskAssigned(event: TaskAssignedEvent): void {
+    this.server.to(this.getProjectRoom(event.projectId)).emit('task.assigned', {
+      projectId: event.projectId,
+      taskId: event.taskId,
+      assigneeUserId: event.assigneeUserId,
+      title: event.title,
+    });
+  }
 
-  emitTaskDeleted(payload: TaskDeletedEvent): void {
-    this.server
-      .to(this.getProjectRoom(payload.projectId))
-      .emit('task.deleted', payload);
+  emitTaskDeleted(event: TaskDeletedEvent): void {
+    this.server.to(this.getProjectRoom(event.projectId)).emit('task.deleted', {
+      projectId: event.projectId,
+      taskId: event.taskId,
+    });
   }
 }

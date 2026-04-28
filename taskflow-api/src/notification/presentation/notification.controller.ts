@@ -1,4 +1,12 @@
-import { Controller, Delete, Get, Inject, Param, ParseIntPipe, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Param,
+  ParseIntPipe,
+  Patch,
+} from '@nestjs/common';
 import type { NotificationRepository } from '../domain/notification.repository.interface';
 import { NOTIFICATION_REPOSITORY } from '../notification.constants';
 

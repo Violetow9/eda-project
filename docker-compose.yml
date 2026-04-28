@@ -10,8 +10,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     networks:
       - api-db
     healthcheck:
@@ -63,7 +61,7 @@ services:
     restart: unless-stopped
     ports:
       - "8025:8025"
-      - "1025:1025" 
+      - "1025:1025"
     networks:
       - web-api
 

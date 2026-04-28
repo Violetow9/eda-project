@@ -21,7 +21,12 @@ export class NotificationPreferenceService {
     inAppEnabled: boolean;
   }): Promise<NotificationPreference> {
     return this.repository.upsert(
-      new NotificationPreference(null, input.userId, input.emailEnabled, input.inAppEnabled),
+      new NotificationPreference(
+        null,
+        input.userId,
+        input.emailEnabled,
+        input.inAppEnabled,
+      ),
     );
   }
 }

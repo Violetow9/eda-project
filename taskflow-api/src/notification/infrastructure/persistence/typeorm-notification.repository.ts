@@ -44,10 +44,14 @@ export class TypeOrmNotificationRepository implements NotificationRepository {
     }
   }
   async markAsRead(notificationId: number): Promise<Notification> {
-    const notification = await this.repository.findOneBy({ id: notificationId });
+    const notification = await this.repository.findOneBy({
+      id: notificationId,
+    });
 
     if (!notification) {
-      throw new NotFoundException(`Notification with id ${notificationId} not found`);
+      throw new NotFoundException(
+        `Notification with id ${notificationId} not found`,
+      );
     }
 
     notification.readAt = new Date();

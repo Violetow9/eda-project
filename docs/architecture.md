@@ -121,3 +121,48 @@ sequenceDiagram
 | Les règles métier vivent dans les entités | Transitions `TaskStatus`, doublon membre `Project.addMember()` |
 | Les services publient et oublient | `TaskService` émet `task.moved` sans connaître `ConsoleListener` |
 | Le frontend ne connaît pas le backend | Les composants React appellent `/api/...` (BFF Next.js), jamais `localhost:3000` |
+
+## Évolutions Rendu 2 — modules ajoutés
+
+```mermaid
+flowchart LR
+    subgraph CORE["Cœur métier (inchangé)"]
+        TS["TaskService\n+ moveTask(id, status, actorId)\n+ create(cmd)"]
+        PS["ProjectService\n+ create(cmd)\n+ addMember(id, userId, actorId)"]
+    end
+
+    subgraph BUS["Bus events interne"]
+        EE["EventEmitter2"]
+    end
+
+    subgraph IN["Adaptateurs entrants"]
+        REST["Controllers REST\n@CurrentUser → actorId"]
+        CLI["AdminCliCommand\nactorId = 'cli'"]
+        WS["TaskGateway\nproject.join → room project:id"]
+    end
+
+    subgraph OUT["Adaptateurs sortants (nouveaux)"]
+        NL["NotificationListener\n(task.assigned / task.moved)"]
+        NS["NotificationService\n→ EmailChannel | InAppChannel | …"]
+        AL["AuditListener\n(7 events)"]
+        ASV["AuditService\n→ AuditLogRepository"]
+        SL["ServerListener\n→ TaskGateway.emit*"]
+    end
+
+    REST --> TS & PS
+    CLI --> TS & PS
+    TS -->|publish| EE
+    PS -->|publish| EE
+    EE --> NL --> NS
+    EE --> AL --> ASV
+    EE --> SL --> WS
+
+    AUTH["AuthService\nregister / login\nJwtAuthGuard global"]
+    REST -. JWT .- AUTH
+```
+
+### Ce qui change vs Rendu 1
+
+- Trois listeners s'abonnent au bus interne : `ServerListener` (temps réel), `NotificationListener` (canaux), `AuditListener` (traçabilité). Le métier ne les connaît pas.
+- Les events portent désormais un `actorId` pour répondre à "qui a fait quoi" sans coupler le métier au transport.
+- L'authentification (JWT, voir ADR-007) et le temps réel (WebSocket par projet, voir ADR-008) vivent intégralement dans leurs propres modules — `TaskService` et `ProjectService` n'importent ni `JwtService` ni `Server`.

@@ -17,8 +17,12 @@ export class TypeOrmNotificationPreferenceRepository implements NotificationPref
     return preference ? this.toDomain(preference) : null;
   }
 
-  async upsert(preference: NotificationPreference): Promise<NotificationPreference> {
-    const existing = await this.repository.findOneBy({ userId: preference.userId });
+  async upsert(
+    preference: NotificationPreference,
+  ): Promise<NotificationPreference> {
+    const existing = await this.repository.findOneBy({
+      userId: preference.userId,
+    });
 
     const entity = this.repository.create({
       id: existing?.id,
@@ -31,7 +35,9 @@ export class TypeOrmNotificationPreferenceRepository implements NotificationPref
     return this.toDomain(saved);
   }
 
-  private toDomain(preference: TypeOrmNotificationPreference): NotificationPreference {
+  private toDomain(
+    preference: TypeOrmNotificationPreference,
+  ): NotificationPreference {
     return new NotificationPreference(
       preference.id,
       preference.userId,

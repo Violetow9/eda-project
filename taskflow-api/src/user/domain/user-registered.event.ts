@@ -1,10 +1,10 @@
-import {DomainEvent} from '../../event/domain/domain-event.interface';
+import { DomainEvent } from '../../event/domain/domain-event.interface';
 
 export class UserRegisteredEvent implements DomainEvent {
-    readonly eventType = 'user.registered';
+  readonly eventType = 'user.registered';
 
-    constructor(
-        readonly userId: string,
-        readonly email: string,
-    ) {}
+  constructor(
+    readonly userId: string,
+    readonly email: string,
+  ) {}
 }

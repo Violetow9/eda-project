@@ -8,8 +8,6 @@ import { TypeOrmTask } from '../infrastructure/typeorm-task.entity';
 import { EventModule } from '../../event/application/event.module';
 import { TaskGateway } from '../infrastructure/task.gateway';
 import { ProjectAccessService } from './project-access.service';
-import { CreateTaskUseCase } from './use-cases/create-task.use-case';
-import { MoveTaskUseCase } from './use-cases/move-task.use-case';
 
 @Module({
   imports: [
@@ -22,16 +20,8 @@ import { MoveTaskUseCase } from './use-cases/move-task.use-case';
     TaskService,
     TaskGateway,
     ProjectAccessService,
-    CreateTaskUseCase,
-    MoveTaskUseCase,
   ],
-  exports: [
-    TASK_REPOSITORY,
-    TaskService,
-    TaskGateway,
-    CreateTaskUseCase,
-    MoveTaskUseCase,
-  ],
+  exports: [TASK_REPOSITORY, TaskService, TaskGateway],
   controllers: [TaskController],
 })
 export class TaskModule {}

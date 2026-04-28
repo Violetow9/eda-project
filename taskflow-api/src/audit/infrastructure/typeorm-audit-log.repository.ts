@@ -26,12 +26,14 @@ export class TypeOrmAuditLogRepository implements AuditLogRepository {
     return this.toDomain(saved);
   }
 
-  async findAll(filters: {
-    entityType?: string;
-    entityId?: string;
-    actorId?: string;
-    action?: string;
-  } = {}): Promise<AuditLog[]> {
+  async findAll(
+    filters: {
+      entityType?: string;
+      entityId?: string;
+      actorId?: string;
+      action?: string;
+    } = {},
+  ): Promise<AuditLog[]> {
     const logs = await this.repository.find({
       where: {
         ...(filters.entityType ? { entityType: filters.entityType } : {}),

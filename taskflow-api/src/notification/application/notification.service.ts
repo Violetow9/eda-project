@@ -1,7 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { NotificationChannel, NotificationType } from '../domain/notification-channel.interface';
+import type {
+  NotificationChannel,
+  NotificationType,
+} from '../domain/notification-channel.interface';
 import { NotificationPreferenceService } from './notification-preference.service';
-import { EMAIL_NOTIFICATION_CHANNEL, IN_APP_NOTIFICATION_CHANNEL } from '../notification.constants';
+import {
+  EMAIL_NOTIFICATION_CHANNEL,
+  IN_APP_NOTIFICATION_CHANNEL,
+} from '../notification.constants';
 
 @Injectable()
 export class NotificationService {

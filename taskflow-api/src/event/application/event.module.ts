@@ -7,12 +7,15 @@ import { ServerListener } from '../infrastructure/server.listener';
 import { TaskModule } from 'src/task/application/task.module';
 
 @Module({
-    imports: [EventEmitterModule.forRoot({ wildcard: true }),forwardRef(() => TaskModule)],
-    providers: [
-        { provide: EVENT_PUBLISHER, useClass: NestEventPublisher },
-        ConsoleListener,
-        ServerListener,
-    ],
-    exports: [EVENT_PUBLISHER],
+  imports: [
+    EventEmitterModule.forRoot({ wildcard: true }),
+    forwardRef(() => TaskModule),
+  ],
+  providers: [
+    { provide: EVENT_PUBLISHER, useClass: NestEventPublisher },
+    ConsoleListener,
+    ServerListener,
+  ],
+  exports: [EVENT_PUBLISHER],
 })
 export class EventModule {}

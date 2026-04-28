@@ -1,11 +1,14 @@
-import {DomainEvent} from '../../event/domain/domain-event.interface';
+import { DomainEvent } from '../../event/domain/domain-event.interface';
 
 export class TaskCreatedEvent implements DomainEvent {
-    readonly eventType = 'task.created';
+  readonly eventType = 'task.created';
 
-    constructor(
-        readonly taskId: number,
-        readonly title: string,
-        readonly projectId: number,
-    ) {}
+  constructor(
+    readonly projectId: number,
+    readonly taskId: number,
+    readonly title: string,
+    readonly status: string,
+    readonly assigneeUserId: string | null,
+    readonly actorId: string = 'system',
+  ) {}
 }
