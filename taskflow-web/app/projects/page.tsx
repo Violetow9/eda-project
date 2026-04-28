@@ -5,9 +5,12 @@ import ProjectForm from '../components/project/ProjectForm';
 import ProjectList from '../components/project/ProjectList';
 import { fetchProjects, createProject } from '../lib/api/project-api';
 import { Project } from '../types/project';
+import { useAuth } from '../components/auth/AuthProvider';
 
 
 export default function ProjectsPage() {
+  const { user, loading: authLoading, logout } = useAuth();
+
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
@@ -29,8 +32,10 @@ export default function ProjectsPage() {
   }
 
   useEffect(() => {
-    loadProjects();
-  }, []);
+    if (!authLoading && user) {
+      loadProjects();
+    }
+  }, [authLoading, user]);
 
   async function handleCreate(input: { projectName: string }) {
     try {
@@ -48,7 +53,7 @@ export default function ProjectsPage() {
     }
   }
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <main className="min-h-screen bg-gray-100 p-8">
         <div className="mx-auto max-w-6xl">
@@ -62,11 +67,26 @@ export default function ProjectsPage() {
   return (
     <main className="min-h-screen bg-gray-100 p-8">
       <div className="mx-auto max-w-6xl">
-        <header className="mb-8">
-          <h1 className="text-3xl text-black font-bold">Projects</h1>
-          <p className="mt-2 text-black">
-            Démonstration simple du module Project et Task
-          </p>
+        <header className="mb-8 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div>
+            <h1 className="text-3xl text-black font-bold">Projects</h1>
+            <p className="mt-2 text-black">
+              Démonstration simple du module Project et Task
+            </p>
+            {user && (
+              <p className="mt-2 text-sm text-gray-600">
+                Connecté : {user.email}
+              </p>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={logout}
+            className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
+          >
+            Se déconnecter
+          </button>
         </header>
 
         {error && (

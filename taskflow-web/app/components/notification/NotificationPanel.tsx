@@ -14,13 +14,15 @@ import {
 } from "@/app/types/notification";
 
 type Props = {
-  userId: string;
+  userId: string | undefined;
+  userName: string | undefined;
   projectId: number;
   refreshSignal?: number;
 };
 
 export default function NotificationPanel({
-  userId,
+  userId = 'user-1',
+  userName = 'user-1',
   projectId,
   refreshSignal = 0,
 }: Props) {
@@ -119,7 +121,7 @@ export default function NotificationPanel({
         <div>
           <h2 className="text-xl font-semibold text-gray-900">Notifications</h2>
           <p className="mt-1 text-sm text-gray-500">
-            Utilisateur simulé : {userId}
+            Utilisateur actuel : {userName}
           </p>
         </div>
 

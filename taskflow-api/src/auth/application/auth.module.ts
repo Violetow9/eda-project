@@ -8,10 +8,11 @@ import { JwtAuthGuard } from '../infrastructure/jwt-auth.guard';
 import { RolesGuard } from '../infrastructure/roles.guard';
 import { TOKEN_PROVIDER } from './auth.constants';
 import { UserModule } from '../../user/application/user.module';
+import { NotificationModule } from '../../notification/notification.module';
 
 @Module({
   imports: [
-    UserModule,
+    UserModule, NotificationModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
