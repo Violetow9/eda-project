@@ -27,7 +27,11 @@ export class AuthService {
       role: UserRole.USER,
     });
 
-    await this.notificationPreferencesService.upsert({userId : user.id, emailEnabled: true, inAppEnabled: true});
+    await this.notificationPreferencesService.upsert({
+      userId: user.id,
+      emailEnabled: true,
+      inAppEnabled: true,
+    });
 
     return this.tokenProvider.generate({
       sub: user.id,

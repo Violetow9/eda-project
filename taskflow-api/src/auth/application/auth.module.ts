@@ -12,7 +12,8 @@ import { NotificationModule } from '../../notification/notification.module';
 
 @Module({
   imports: [
-    UserModule, NotificationModule,
+    UserModule,
+    NotificationModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
