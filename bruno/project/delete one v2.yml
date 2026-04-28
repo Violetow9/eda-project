@@ -1,11 +1,11 @@
 info:
-  name: delete one
+  name: delete one v2
   type: http
-  seq: 4
+  seq: 6
 
 http:
   method: DELETE
-  url: "{{HOST}}/v1/{{ROUTE}}/2"
+  url: "{{HOST}}/v2/{{ROUTE}}/2"
   auth:
     type: bearer
     token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmY2I3MzYyNi1mYjM5LTQ4NTMtOTA5Yy01NGE3MjdmYzljMjIiLCJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc3Mzc4MTkyLCJleHAiOjE3NzczNzkwOTJ9.CcemRuCIGLCyUiCL3Lr6fhGh1DZ-6KY_UEoqMSgU6vM
