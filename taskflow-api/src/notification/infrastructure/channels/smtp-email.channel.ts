@@ -24,6 +24,9 @@ export class SmtpEmailChannel implements NotificationChannel {
     const config = this.getConfig();
     const to = this.resolveEmailFromUserId(input.userId);
 
+    if (process.env.EMAIL_CHANNEL_SHOULD_FAIL === 'true') {
+      throw new Error('Simulated EmailChannel failure');
+    }
     if (!config.enabled) {
       this.logger.log(
         `[EMAIL:DRY_RUN] to=${to} type=${input.type} subject="${input.title}" message="${input.message}" metadata=${JSON.stringify(

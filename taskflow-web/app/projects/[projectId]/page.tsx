@@ -213,7 +213,7 @@ export default function ProjectDetailPage({params}: ProjectPageProps) {
             setMovingTaskId(task.id);
             setError(null);
 
-            const updatedTask = await moveTask(task.id, nextStatus);
+            const updatedTask = await moveTask(task.id, nextStatus, user?.id);
 
             setTasks((current) =>
                 current.map((item) =>

@@ -18,19 +18,23 @@ import {
   NOTIFICATION_PREFERENCE_REPOSITORY,
   NOTIFICATION_REPOSITORY,
 } from './notification.constants';
+import { FailedNotificationQueueService } from './application/failed-notification-queue.service';
+import { TypeOrmFailedNotificationMessage } from './infrastructure/persistence/typeorm-failed-notification.entity';
+import { FailedNotificationController } from './presentation/failed-notification.controller';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       TypeOrmNotification,
-      TypeOrmNotificationPreference,
+      TypeOrmNotificationPreference, TypeOrmFailedNotificationMessage
     ]),
     ProjectModule,
   ],
-  controllers: [NotificationPreferenceController, NotificationController],
+  controllers: [NotificationPreferenceController, NotificationController, FailedNotificationController],
   providers: [
     NotificationService,
     NotificationPreferenceService,
+    FailedNotificationQueueService,
     NotificationListener,
     SmtpEmailChannel,
     InAppChannel,

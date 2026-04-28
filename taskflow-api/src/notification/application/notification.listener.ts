@@ -23,7 +23,7 @@ export class NotificationListener {
     await Promise.all(
       members.map((memberUserId) =>
         this.notificationService.notifyUser({
-          userId: memberUserId,
+          userId: event.actorId,
           type: 'task.moved',
           title: 'Task moved',
           message: `La tâche ${event.taskId} a été déplacée par ${event.actorId ?? 'user-1'}`,

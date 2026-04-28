@@ -22,11 +22,11 @@ export async function createTask(
     return res.json();
 }
 
-export async function moveTask(taskId: number, status: TaskStatus): Promise<Task> {
+export async function moveTask(taskId: number, status: TaskStatus, userId: string = 'system'): Promise<Task> {
     const res = await fetch(`/api/tasks/${taskId}/move`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status, movedBy: 'user-1' }),
+        body: JSON.stringify({ status, movedBy: userId }),
     });
     if (!res.ok) {
         const text = await res.text();

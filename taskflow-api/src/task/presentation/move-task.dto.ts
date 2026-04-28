@@ -7,5 +7,5 @@ export class MoveTaskDto {
 
   @IsOptional()
   @IsString()
-  actorId?: string;
+  movedBy?: string;
 }
