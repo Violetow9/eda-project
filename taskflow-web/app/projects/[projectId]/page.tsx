@@ -1,13 +1,16 @@
-'use client';
+"use client";
 
-import KanbanBoard from '@/app/components/task/KanbanBoard';
-import TaskForm from '@/app/components/task/TaskForm';
-import { fetchProjectById } from '@/app/lib/api/project-api';
-import { fetchTasksByProject, createTask, moveTask, deleteTask } from '@/app/lib/api/tasks-api';
-import { Project } from '@/app/types/project';
-import { Task, TaskStatus } from '@/app/types/task';
-import Link from 'next/link';
-import { use, useEffect, useState } from 'react';
+import KanbanBoard from "@/app/components/task/KanbanBoard";
+import TaskForm from "@/app/components/task/TaskForm";
+import { fetchProjectById } from "@/app/lib/api/project-api";
+import { socket } from "@/app/lib/socket";
+import { Project } from "@/app/types/project";
+import { Task, TaskStatus } from "@/app/types/task";
+import Link from "next/link";
+import { use, useEffect, useState } from "react";
+
+import NotificationPanel from "@/app/components/notification/NotificationPanel";
+import { fetchTasksByProject, createTask, moveTask, deleteTask } from "@/app/lib/api/task-api";
 
 type ProjectPageProps = {
   params: Promise<{
@@ -26,6 +29,7 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
   const [movingTaskId, setMovingTaskId] = useState<number | null>(null);
   const [deletingTaskId, setDeletingTaskId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [notificationRefreshSignal, setNotificationRefreshSignal] = useState(0);
 
   async function loadData() {
     try {
@@ -41,7 +45,7 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
       setTasks(tasksData);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Erreur lors du chargement',
+        err instanceof Error ? err.message : "Erreur lors du chargement",
       );
     } finally {
       setLoading(false);
@@ -49,9 +53,123 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
   }
 
   useEffect(() => {
-    if (!Number.isNaN(projectId)) {
-      loadData();
+    if (Number.isNaN(projectId)) {
+      return;
     }
+
+    loadData();
+
+    console.log("connecting socket for project", projectId);
+
+    socket.connect();
+
+    socket.on("connect", () => {
+      console.log("socket connected", socket.id);
+
+      socket.emit("project.join", {
+        projectId,
+        userId: "user-1",
+      });
+    });
+
+    function onTaskCreated(payload: { projectId: number; task: Task }) {
+      if (payload.projectId !== projectId) {
+        return;
+      }
+
+      setTasks((currentTasks) => {
+        if (!payload.task) {
+          return currentTasks;
+        }
+
+        const alreadyExists = currentTasks.some(
+          (task) => task.id === payload.task.id,
+        );
+
+        if (alreadyExists) {
+          return currentTasks;
+        }
+
+        return [payload.task, ...currentTasks];
+      });
+      setNotificationRefreshSignal((current) => current + 1);
+    }
+
+    function onTaskMoved(payload: {
+      projectId: number;
+      taskId: number;
+      from: string;
+      to: string;
+      movedBy?: string;
+    }) {
+      if (payload.projectId !== projectId) {
+        return;
+      }
+      console.log(payload);
+      setTasks((currentTasks) =>
+        currentTasks.map((task) =>
+          task.id === payload.taskId
+            ? {
+                ...task,
+                status: payload.to as TaskStatus,
+              }
+            : task,
+        ),
+      );
+      setNotificationRefreshSignal((current) => current + 1);
+    }
+
+
+    function onTaskAssigned(payload: {
+      projectId: number;
+      taskId: number;
+      assigneeUserId: string;
+      title: string;
+    }) {
+      if (payload.projectId !== projectId) {
+        return;
+      }
+
+      if (payload.assigneeUserId !== "user-1") {
+        return;
+      }
+
+      setNotificationRefreshSignal((current) => current + 1);
+    }
+
+    function onTaskDeleted(payload: { projectId: number; taskId: number }) {
+      if (payload.projectId !== projectId) {
+        return;
+      }
+
+      setTasks((currentTasks) =>
+        currentTasks.filter((task) => task.id !== payload.taskId),
+      );
+    }
+
+    socket.on("task.created", onTaskCreated);
+    socket.on("task.moved", onTaskMoved);
+    socket.on("task.assigned", onTaskAssigned);
+    socket.on("task.deleted", onTaskDeleted);
+
+    socket.on("connect_error", (error) => {
+      console.error("socket connect_error", error);
+    });
+
+    socket.on("disconnect", (reason) => {
+      console.log("socket disconnected", reason);
+    });
+
+    return () => {
+      socket.off("task.created", onTaskCreated);
+      socket.off("task.moved", onTaskMoved);
+      socket.off("task.assigned", onTaskAssigned);
+      socket.off("task.deleted", onTaskDeleted);
+      socket.off("connect");
+      socket.off("connect_error");
+      socket.off("disconnect");
+      socket.disconnect();
+    };
   }, [projectId]);
 
   async function handleCreate(input: {
@@ -63,10 +181,22 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
       setError(null);
 
       const createdTask = await createTask(projectId, input);
-      setTasks((current) => [createdTask, ...current]);
+
+      setTasks((current) => {
+        const alreadyExists = current.some(
+          (task) => task.id === createdTask.id,
+        );
+
+        if (alreadyExists) {
+          return current;
+        }
+
+        return [createdTask, ...current];
+      });
+      setNotificationRefreshSignal((current) => current + 1);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Erreur lors de la création',
+        err instanceof Error ? err.message : "Erreur lors de la création",
       );
     } finally {
       setCreating(false);
@@ -81,11 +211,13 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
       const updatedTask = await moveTask(task.id, nextStatus);
 
       setTasks((current) =>
-        current.map((item) => (item.id === updatedTask.id ? updatedTask : item)),
+        current.map((item) =>
+          item.id === updatedTask.id ? updatedTask : item,
+        ),
       );
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Erreur lors du déplacement',
+        err instanceof Error ? err.message : "Erreur lors du déplacement",
       );
     } finally {
       setMovingTaskId(null);
@@ -101,7 +233,7 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
       setTasks((current) => current.filter((task) => task.id !== taskId));
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Erreur lors de la suppression',
+        err instanceof Error ? err.message : "Erreur lors de la suppression",
       );
     } finally {
       setDeletingTaskId(null);
@@ -121,7 +253,7 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
   if (!project) {
     return (
       <main className="min-h-screen bg-gray-100 p-8">
-        <div className="mx-auto text-black  max-w-7xl">
+        <div className="mx-auto text-black max-w-7xl">
           <p className="text-4xl">Projet introuvable.</p>
           <Link
             href="/projects"
@@ -156,6 +288,11 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
         )}
 
         <TaskForm onCreate={handleCreate} isCreating={creating} />
+        <NotificationPanel
+          userId="user-1"
+          projectId={projectId}
+          refreshSignal={notificationRefreshSignal}
+        />
 
         <KanbanBoard
           tasks={tasks}
@@ -168,3 +305,7 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
     </main>
   );
 }
+function setNotificationRefreshSignal(arg0: (current: any) => any) {
+  throw new Error("Function not implemented.");
+}
+

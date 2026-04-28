@@ -11,4 +11,9 @@ export class CreateTaskDto {
     @IsOptional()
     @IsString()
     assigneeUserId?: string | null;
+
+    
+    @IsOptional()
+    @IsString()
+    actorId?: string;
 }

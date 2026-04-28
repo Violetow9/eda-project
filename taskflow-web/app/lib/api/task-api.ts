@@ -1,4 +1,4 @@
-import { Task, TaskStatus } from '@/app/types/task';
+import { Task, TaskStatus } from '../../types/task';
 
 export async function fetchTasksByProject(projectId: number): Promise<Task[]> {
     const res = await fetch(`/api/tasks/project/${projectId}`, { cache: 'no-store' });
@@ -26,7 +26,7 @@ export async function moveTask(taskId: number, status: TaskStatus): Promise<Task
     const res = await fetch(`/api/tasks/${taskId}/move`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({ status, movedBy: 'user-1' }),
     });
     if (!res.ok) {
         const text = await res.text();

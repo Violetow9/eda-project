@@ -23,15 +23,15 @@ export default function KanbanColumn({
   return (
     <section className="rounded-2xl bg-white p-5 shadow-sm">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-semibold">{status}</h2>
-        <span className="rounded-full bg-gray-200 px-3 py-1 text-sm font-medium text-gray-700">
+        <h2 className="text-xl font-semibold text-black">{status}</h2>
+        <span className="rounded-full bg-gray-200 px-3 py-1 text-sm font-medium text-gray-700 text-black">
           {tasks.length}
         </span>
       </div>
 
       <div className="space-y-4">
         {tasks.length === 0 && (
-          <div className="rounded-xl border border-dashed border-gray-300 p-4 text-sm text-gray-500">
+          <div className="rounded-xl border border-dashed border-gray-300 p-4 text-sm text-gray-500 text-black">
             Aucune tâche
           </div>
         )}

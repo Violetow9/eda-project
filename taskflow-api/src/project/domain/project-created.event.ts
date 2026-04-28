@@ -6,5 +6,6 @@ export class ProjectCreatedEvent implements DomainEvent {
     constructor(
         readonly projectId: number,
         readonly projectName: string,
+        readonly actorId: string = 'system',
     ) {}
 }
