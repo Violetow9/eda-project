@@ -11,6 +11,7 @@ import {use, useEffect, useState} from "react";
 
 import NotificationPanel from "@/app/components/notification/NotificationPanel";
 import {createTask, deleteTask, fetchTasksByProject, moveTask} from "@/app/lib/api/task-api";
+import { useAuth } from "@/app/components/auth/AuthProvider";
 
 type ProjectPageProps = {
     params: Promise<{
@@ -19,6 +20,8 @@ type ProjectPageProps = {
 };
 
 export default function ProjectDetailPage({params}: ProjectPageProps) {
+    const { user, loading: authLoading, logout } = useAuth();
+
     const {projectId: projectIdParam} = use(params);
     const projectId = Number(projectIdParam);
 
@@ -68,7 +71,7 @@ export default function ProjectDetailPage({params}: ProjectPageProps) {
 
             socket.emit("project.join", {
                 projectId,
-                userId: "user-1",
+                userId: user?.id,
             });
         });
 
@@ -130,7 +133,7 @@ export default function ProjectDetailPage({params}: ProjectPageProps) {
                 return;
             }
 
-            if (payload.assigneeUserId !== "user-1") {
+            if (payload.assigneeUserId !== user?.id) {
                 return;
             }
 
@@ -172,7 +175,7 @@ export default function ProjectDetailPage({params}: ProjectPageProps) {
             socket.off("disconnect");
             socket.disconnect();
         };
-    }, [projectId]);
+    }, [authLoading, projectId, user]);
 
     async function handleCreate(input: {
         title: string;
@@ -242,7 +245,7 @@ export default function ProjectDetailPage({params}: ProjectPageProps) {
         }
     }
 
-    if (loading) {
+  if (authLoading || loading) {
         return (
             <main className="min-h-screen bg-gray-100 p-8">
                 <div className="mx-auto max-w-7xl">
@@ -268,48 +271,57 @@ export default function ProjectDetailPage({params}: ProjectPageProps) {
         );
     }
 
-    return (
-        <main className="min-h-screen bg-gray-100 p-8">
-            <div className="mx-auto max-w-7xl">
-                <div className="mb-8">
-                    <Link
-                        href="/projects"
-                        className="mb-4 inline-block text-sm font-medium text-gray-600 hover:text-black"
-                    >
-                        ← Retour aux projets
-                    </Link>
+  return (
+    <main className="min-h-screen bg-gray-100 p-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div>
+            <Link
+              href="/projects"
+              className="mb-4 inline-block text-sm font-medium text-gray-600 hover:text-black"
+            >
+              ← Retour aux projets
+            </Link>
 
-                    <h1 className="text-3xl font-bold">{project.projectName}</h1>
-                    <p className="mt-2 text-gray-600">Projet #{project.id}</p>
-                </div>
+            <h1 className="text-3xl font-bold">{project.projectName}</h1>
+            <p className="mt-2 text-gray-600">Projet #{project.id}</p>
+            {user && (
+              <p className="mt-2 text-sm text-gray-600">
+                Connecté : {user.email}
+              </p>
+            )}
+          </div>
 
-                {error && (
-                    <div className="mb-6 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-red-700">
-                        {error}
-                    </div>
-                )}
+          <button
+            type="button"
+            onClick={logout}
+            className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
+          >
+            Se déconnecter
+          </button>
+        </div>
 
-                <TaskForm onCreate={handleCreate} isCreating={creating}/>
-                <NotificationPanel
-                    userId="user-1"
-                    projectId={projectId}
-                    refreshSignal={notificationRefreshSignal}
-                />
+        {error && (
+          <div className="mb-6 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-red-700">
+            {error}
+          </div>
+        )}
 
-                <KanbanBoard
-                    tasks={tasks}
-                    movingTaskId={movingTaskId}
-                    deletingTaskId={deletingTaskId}
-                    onMove={handleMove}
-                    onDelete={handleDelete}
-                />
-            </div>
-        </main>
-    );
+        <TaskForm onCreate={handleCreate} isCreating={creating} />
+        <NotificationPanel
+            userId={user?.id}
+            userName={user?.email}
+            projectId={projectId}
+            refreshSignal={notificationRefreshSignal}
+        />
+        <KanbanBoard
+          tasks={tasks}
+          movingTaskId={movingTaskId}
+          deletingTaskId={deletingTaskId}
+          onMove={handleMove}
+          onDelete={handleDelete}
+        />
+      </div>
+    </main>
+  );
 }
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function setNotificationRefreshSignal(arg0: (current: any) => any) {
-    throw new Error("Function not implemented.");
-}
-

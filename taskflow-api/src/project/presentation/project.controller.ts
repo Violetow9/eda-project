@@ -19,7 +19,6 @@ import { AuthenticatedUser } from '../../auth/domain/authenticated-user.entity';
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
-  @Roles('admin')
   @Get()
   getAll(): Promise<Project[]> {
     return this.projectService.getAll();

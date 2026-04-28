@@ -7,11 +7,15 @@ import { TokenPair } from '../domain/token-pair';
 import { RegisterCommand } from './register.command';
 import { LoginCommand } from './login.command';
 import { UserRole } from '../../user/domain/user.entity';
+import { NotificationPreferenceService } from 'src/notification/application/notification-preference.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
+
+    private readonly notificationPreferencesService: NotificationPreferenceService,
+
     @Inject(TOKEN_PROVIDER)
     private readonly tokenProvider: TokenProvider,
   ) {}
@@ -22,6 +26,8 @@ export class AuthService {
       password: command.password,
       role: UserRole.USER,
     });
+
+    await this.notificationPreferencesService.upsert({userId : user.id, emailEnabled: true, inAppEnabled: true});
 
     return this.tokenProvider.generate({
       sub: user.id,
