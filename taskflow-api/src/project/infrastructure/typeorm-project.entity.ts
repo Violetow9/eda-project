@@ -1,6 +1,6 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import {Column, Entity, Index, PrimaryGeneratedColumn} from 'typeorm';
 
-@Entity()
+@Entity({name: 'projects'})
 export class TypeOrmProject {
     @PrimaryGeneratedColumn()
     id: number;
@@ -9,6 +9,6 @@ export class TypeOrmProject {
     @Index()
     projectName: string;
 
-    @Column('simple-array', { default: '' })
+    @Column('simple-array', {default: ''})
     members: string[];
 }

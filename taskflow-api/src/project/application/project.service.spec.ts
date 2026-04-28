@@ -77,22 +77,33 @@ describe('ProjectService', () => {
             const project = makeProject({id: 5, projectName: 'TaskFlow'});
             projectRepo.create.mockResolvedValue(project);
 
-            await service.create({projectName: 'TaskFlow'});
+            await service.create({projectName: 'TaskFlow', creatorId: 'creator-1'});
 
             expect(eventPublisher.publish).toHaveBeenCalledTimes(1);
             expect(eventPublisher.publish).toHaveBeenCalledWith(
-                'project.created',
                 expect.objectContaining<Partial<ProjectCreatedEvent>>({
+                    eventType: 'project.created',
                     projectId: 5,
                     projectName: 'TaskFlow',
                 }),
             );
         });
 
+        it('creates project with creator as first member', async () => {
+            const project = makeProject({id: 5});
+            projectRepo.create.mockResolvedValue(project);
+
+            await service.create({projectName: 'TaskFlow', creatorId: 'creator-1'});
+
+            expect(projectRepo.create).toHaveBeenCalledWith(
+                expect.objectContaining({members: ['creator-1']}),
+            );
+        });
+
         it('does not publish any event when the repository throws', async () => {
             projectRepo.create.mockRejectedValue(new Error('db error'));
 
-            await expect(service.create({projectName: 'TaskFlow'})).rejects.toThrow();
+            await expect(service.create({projectName: 'TaskFlow', creatorId: 'creator-1'})).rejects.toThrow();
             expect(eventPublisher.publish).not.toHaveBeenCalled();
         });
 
@@ -100,7 +111,7 @@ describe('ProjectService', () => {
             const project = makeProject({projectName: 'TaskFlow'});
             projectRepo.create.mockResolvedValue(project);
 
-            const result = await service.create({projectName: 'TaskFlow'});
+            const result = await service.create({projectName: 'TaskFlow', creatorId: 'creator-1'});
 
             expect(result).toBe(project);
         });
@@ -134,8 +145,8 @@ describe('ProjectService', () => {
 
             expect(eventPublisher.publish).toHaveBeenCalledTimes(1);
             expect(eventPublisher.publish).toHaveBeenCalledWith(
-                'member.added',
                 expect.objectContaining<Partial<MemberAddedEvent>>({
+                    eventType: 'member.added',
                     projectId: 3,
                     userId: 'user-42',
                 }),

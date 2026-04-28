@@ -1,6 +1,6 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import {Column, Entity, Index, PrimaryGeneratedColumn} from 'typeorm';
 
-@Entity()
+@Entity({name: 'tasks'})
 export class TypeOrmTask {
     @PrimaryGeneratedColumn()
     id: number;
@@ -15,6 +15,6 @@ export class TypeOrmTask {
     @Index()
     projectId: number;
 
-    @Column({ nullable: true, type: 'varchar' })
+    @Column({nullable: true, type: 'varchar'})
     assigneeUserId: string | null;
 }

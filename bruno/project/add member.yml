@@ -1,0 +1,23 @@
+info:
+  name: add member
+  type: http
+  seq: 5
+
+http:
+  method: POST
+  url: "{{HOST}}/v1/{{ROUTE}}/1/members"
+  body:
+    type: json
+    data: |-
+      {
+        "userId": "fcb73626-fb39-4853-909c-54a727fc9c23"
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmY2I3MzYyNi1mYjM5LTQ4NTMtOTA5Yy01NGE3MjdmYzljMjIiLCJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzc1MTM2MTgxLCJleHAiOjE3NzUxMzcwODF9.dGe5d5yMU3NojCkuZhd9LpsgOUY94Yj8oCWLV6eGMKY
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

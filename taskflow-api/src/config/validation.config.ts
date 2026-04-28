@@ -7,5 +7,7 @@ export const validationConfig = Joi.object({
     POSTGRES_PASSWORD: Joi.string().required(),
     POSTGRES_DB: Joi.string().required(),
     POSTGRES_SYNCHRONIZE: Joi.boolean().default(false),
-    POSTGRES_LOGGING: Joi.boolean().default(false)
+    POSTGRES_LOGGING: Joi.boolean().default(false),
+    JWT_ACCESS_SECRET: Joi.string().required(),
+    JWT_ACCESS_TTL: Joi.string().default('15m'),
 });

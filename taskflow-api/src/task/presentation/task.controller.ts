@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
-import { TaskService } from '../application/task.service';
-import { Task, TaskStatus } from '../domain/task.entity';
-import { CreateTaskDto } from './create-task.dto';
-import { MoveTaskDto } from './move-task.dto';
+import {Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post} from '@nestjs/common';
+import {TaskService} from '../application/task.service';
+import {Task, TaskStatus} from '../domain/task.entity';
+import {CreateTaskDto} from './create-task.dto';
+import {MoveTaskDto} from './move-task.dto';
+import {AssignTaskDto} from './assign-task.dto';
 
-@Controller({ path: 'task', version: '1' })
+@Controller({path: 'task', version: '1'})
 export class TaskController {
     constructor(private readonly taskService: TaskService) {}
 
@@ -25,7 +26,11 @@ export class TaskController {
 
     @Post()
     create(@Body() dto: CreateTaskDto): Promise<Task> {
-        return this.taskService.create(dto);
+        return this.taskService.create({
+            title: dto.title,
+            projectId: dto.projectId,
+            assigneeUserId: dto.assigneeUserId,
+        });
     }
 
     @Patch(':id/move')
@@ -34,6 +39,19 @@ export class TaskController {
         @Body() dto: MoveTaskDto,
     ): Promise<Task> {
         return this.taskService.moveTask(id, TaskStatus.from(dto.status));
+    }
+
+    @Patch(':id/assign')
+    assign(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() dto: AssignTaskDto,
+    ): Promise<Task> {
+        return this.taskService.assignTask(id, dto.userId);
+    }
+
+    @Patch(':id/unassign')
+    unassign(@Param('id', ParseIntPipe) id: number): Promise<Task> {
+        return this.taskService.unassignTask(id);
     }
 
     @Delete(':id')

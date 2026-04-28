@@ -132,8 +132,8 @@ describe('TaskService', () => {
 
             expect(eventPublisher.publish).toHaveBeenCalledTimes(1);
             expect(eventPublisher.publish).toHaveBeenCalledWith(
-                'task.created',
                 expect.objectContaining<Partial<TaskCreatedEvent>>({
+                    eventType: 'task.created',
                     taskId: 42,
                     title: 'Fix bug',
                     projectId: 10,
@@ -184,8 +184,8 @@ describe('TaskService', () => {
 
             expect(eventPublisher.publish).toHaveBeenCalledTimes(1);
             expect(eventPublisher.publish).toHaveBeenCalledWith(
-                'task.moved',
                 expect.objectContaining<Partial<TaskMovedEvent>>({
+                    eventType: 'task.moved',
                     taskId: 7,
                     from: 'Todo',
                     to: 'In Progress',

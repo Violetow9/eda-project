@@ -24,7 +24,10 @@ export class TypeOrmProjectRepository implements ProjectRepository {
     }
 
     async create(project: Partial<Project>): Promise<Project> {
-        const row = this.repo.create({projectName: project.projectName});
+        const row = this.repo.create({
+            projectName: project.projectName,
+            members: project.members ?? [],
+        });
         await this.repo.save(row);
         return toDomain(row);
     }

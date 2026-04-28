@@ -1,12 +1,13 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { Task, TaskStatus } from '../domain/task.entity';
-import type { TaskRepository } from '../domain/task.repository.interface';
-import { TASK_REPOSITORY } from './task.constants';
-import { CreateTaskDto } from '../presentation/create-task.dto';
-import type { EventPublisher } from '../../event/application/event-publisher.interface';
-import { EVENT_PUBLISHER } from '../../event/application/event.constants';
-import { TaskCreatedEvent } from '../domain/task-created.event';
-import { TaskMovedEvent } from '../domain/task-moved.event';
+import {Inject, Injectable, NotFoundException} from '@nestjs/common';
+import {Task, TaskStatus} from '../domain/task.entity';
+import type {TaskRepository} from '../domain/task.repository.interface';
+import {TASK_REPOSITORY} from './task.constants';
+import type {EventPublisher} from '../../event/application/event-publisher.interface';
+import {EVENT_PUBLISHER} from '../../event/application/event.constants';
+import {TaskCreatedEvent} from '../domain/task-created.event';
+import {TaskMovedEvent} from '../domain/task-moved.event';
+import {TaskAssignedEvent} from '../domain/task-assigned.event';
+import {CreateTaskCommand} from './create-task.command';
 
 @Injectable()
 export class TaskService {
@@ -35,15 +36,15 @@ export class TaskService {
         return this.taskRepository.remove(id);
     }
 
-    async create(dto: CreateTaskDto): Promise<Task> {
+    async create(command: CreateTaskCommand): Promise<Task> {
         const task = await this.taskRepository.create({
-            title: dto.title,
-            projectId: dto.projectId,
-            assigneeUserId: dto.assigneeUserId ?? null,
+            title: command.title,
+            projectId: command.projectId,
+            assigneeUserId: command.assigneeUserId ?? null,
             status: TaskStatus.TODO,
         });
 
-        this.eventPublisher.publish('task.created', new TaskCreatedEvent(task.id, task.title, task.projectId));
+        this.eventPublisher.publish(new TaskCreatedEvent(task.id, task.title, task.projectId));
 
         return task;
     }
@@ -54,8 +55,24 @@ export class TaskService {
         const moved = task.move(newStatus);
         const saved = await this.taskRepository.update(moved);
 
-        this.eventPublisher.publish('task.moved', new TaskMovedEvent(saved.id, previousStatus, saved.status.toString()));
+        this.eventPublisher.publish(new TaskMovedEvent(saved.id, previousStatus, saved.status.toString()));
 
         return saved;
+    }
+
+    async assignTask(id: number, userId: string): Promise<Task> {
+        const task = await this.getById(id);
+        const assigned = task.assign(userId);
+        const saved = await this.taskRepository.update(assigned);
+
+        this.eventPublisher.publish(new TaskAssignedEvent(saved.id, userId, saved.projectId));
+
+        return saved;
+    }
+
+    async unassignTask(id: number): Promise<Task> {
+        const task = await this.getById(id);
+        const unassigned = task.unassign();
+        return this.taskRepository.update(unassigned);
     }
 }

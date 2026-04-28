@@ -79,4 +79,24 @@ export class Task {
             assigneeUserId: this.assigneeUserId,
         });
     }
+
+    assign(userId: string): Task {
+        return new Task({
+            id: this.id,
+            title: this.title,
+            status: this.status,
+            projectId: this.projectId,
+            assigneeUserId: userId,
+        });
+    }
+
+    unassign(): Task {
+        return new Task({
+            id: this.id,
+            title: this.title,
+            status: this.status,
+            projectId: this.projectId,
+            assigneeUserId: null,
+        });
+    }
 }
