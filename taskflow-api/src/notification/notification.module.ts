@@ -15,9 +15,11 @@ import { InAppChannel } from './infrastructure/channels/in-app.channel';
 import {
   EMAIL_NOTIFICATION_CHANNEL,
   IN_APP_NOTIFICATION_CHANNEL,
+  NOTIFICATION_CHANNELS,
   NOTIFICATION_PREFERENCE_REPOSITORY,
   NOTIFICATION_REPOSITORY,
 } from './notification.constants';
+import { NotificationChannel } from './domain/notification-channel.interface';
 import { FailedNotificationQueueService } from './application/failed-notification-queue.service';
 import { TypeOrmFailedNotificationMessage } from './infrastructure/persistence/typeorm-failed-notification.entity';
 import { FailedNotificationController } from './presentation/failed-notification.controller';
@@ -53,6 +55,13 @@ import { FailedNotificationController } from './presentation/failed-notification
     {
       provide: IN_APP_NOTIFICATION_CHANNEL,
       useExisting: InAppChannel,
+    },
+    {
+      provide: NOTIFICATION_CHANNELS,
+      inject: [EMAIL_NOTIFICATION_CHANNEL, IN_APP_NOTIFICATION_CHANNEL],
+      useFactory: (
+        ...channels: NotificationChannel[]
+      ): NotificationChannel[] => channels,
     },
   ],
   exports: [NotificationService, NotificationPreferenceService],
